@@ -1,5 +1,5 @@
 <template>
-   <div class="wrapper-addResume">
+  <div class="wrapper-addResume">
     <div :class="['person-info',{'readyInfo':clonePerson}]">
       <div class="add" v-if="!clonePerson">
         <div class="avatar">
@@ -21,7 +21,7 @@
 
             </div>
             <div class="school">
-              湖南文理学院 / 本科 . 统招 / 应届毕业生 / {{clonePerson.city}} / 21岁
+              {{cloneEducation.school||'湖南文理学院'}} / {{cloneEducation.education || '本科'}} . 统招 / 应届毕业生 / {{clonePerson.city}} / {{clonePerson.age}}岁
             </div>
             <div class="other">
               <span style="margin-right:10px">
@@ -80,26 +80,59 @@
             </div>
 
           </div>
-          <template  v-if="item.className == 'internship-experience'">
-            <div :key="index1" class="internship1" v-for="(ele,index1) in cloneInternship"  @mouseenter="onInternshipMouseEnter" @mouseleave="onInternshipMouseLeave">
-            <div class="header">
-              <span>{{ele.company}} / </span>
-              <span>{{ele.department}}</span>
-
-              <span class="edit"  @click="item.editData(item.dialog,ele,index1)">编辑</span>
-              <span class="time">{{ele.timeArea[0]}} - {{ele.timeArea[1]}}</span>
+          <template v-if="item.className == 'internship-experience'">
+            <div :key="index1" class="internship1" v-for="(ele,index1) in cloneInternship" @mouseenter="onInternshipMouseEnter" @mouseleave="onInternshipMouseLeave">
+              <div class="header">
+                <span>{{ele.company}} / </span>
+                <span>{{ele.department}}</span>
+                <span class="edit" style="margin-left:10px" @click="openDelInternshipDialog('internshipDeleteDialogVisible',index1)">
+                  <i class="iconfont-ats  icon-shanchu"></i>
+                  删除
+                </span>
+                <span class="edit" @click="item.editData(item.dialog,ele,index1)">
+                  <i class="iconfont-ats icon-jianlixiangqing-bianji"></i>
+                  编辑
+                </span>
+                <span class="time">{{ele.timeArea[0]}} - {{ele.timeArea[1]}}</span>
+              </div>
+              <div class="footer">
+                <p style="color:#333;margin-bottom:5px">{{ele.jobName}}</p>
+                {{ele.workContent}}
+              </div>
             </div>
-            <div class="footer">
-              <p style="color:#333;margin-bottom:10px">{{ele.jobName}}</p>
-              {{ele.workContent}}
-            </div>
-          </div>
           </template>
-          
-          
-          <div class="project1" v-if="item.className == 'project-experience'"></div>
-          <div class="major1" v-if="item.className == 'major-skill'"></div>
-          <div class="evaluate1" v-if="item.className == 'person-evaluate'"></div>
+
+
+           <template v-if="item.className == 'project-experience'">
+            <div :key="index1" class="project1" v-for="(ele,index1) in cloneProject" @mouseenter="onInternshipMouseEnter" @mouseleave="onInternshipMouseLeave">
+              <div class="header">
+                <span>{{ele.projectName}}</span> 
+                <span class="edit" style="margin-left:10px" @click="openDelProjectDialog('projectDeleteDialogVisible',index1)">
+                  <i class="iconfont-ats  icon-shanchu"></i>
+                  删除
+                </span>
+                <span class="edit" @click="item.editData(item.dialog,ele,index1)">
+                  <i class="iconfont-ats icon-jianlixiangqing-bianji"></i>
+                  编辑
+                </span>
+                <span class="time">{{ele.projectTime&&ele.projectTime[0]}} - {{ele.projectTime&&ele.projectTime[1]}}</span>
+              </div>
+              <div class="footer">
+                <p>{{ele.projectDetail}}</p>
+                <p style="color:#333;margin-bottom:5px">{{ele.projectLink?'项目地址：'+ ele.projectLink:''}}</p>
+              </div>
+            </div>
+          </template>
+          <div class="major1" v-if="item.className == 'major-skill'">
+            <p v-for="(item,index) in cloneMajor" :key="index">
+              {{item}}
+            </p>
+          </div>
+          <div class="evaluate1" v-if="item.className == 'person-evaluate'">
+            <p v-for="(item,index) in cloneEvaluate" :key="index">
+              {{item}}
+            </p>
+          </div>
 
         </div>
       </div>
@@ -114,6 +147,9 @@
         <el-form-item label="性别" prop="sex">
           <el-radio v-model="personInfoForm.sex" label="1">男</el-radio>
           <el-radio v-model="personInfoForm.sex" label="0">女</el-radio>
+        </el-form-item>
+         <el-form-item label="年龄" prop="age">
+          <el-input v-model="personInfoForm.age"></el-input>
         </el-form-item>
         <el-form-item label="所在城市" prop="city">
           <el-input v-model="personInfoForm.city"></el-input>
@@ -166,7 +202,7 @@
 
     <el-dialog title="实习经历" :visible.sync="internshipDialogVisible" width="37%" center>
 
-      <el-form ref="internshipInfo" :rules="internshipInfoRules" :model="internshipInfo" label-width="80px">
+      <el-form id="interInfo" ref="internshipInfo" :rules="internshipInfoRules" :model="internshipInfo" label-width="80px">
         <el-form-item label="公司" prop="company">
           <el-input v-model="internshipInfo.company"></el-input>
         </el-form-item>
@@ -191,32 +227,77 @@
       </el-form>
     </el-dialog>
 
+    
+
 
     <el-dialog title="项目经历" :visible.sync="projectDialogVisible" width="30%" center>
-      <span>项目经历</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="projectDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="projectDialogVisible = false">确 定</el-button>
-      </span>
+        <el-form  ref="projectInfoForm" :rules="projectInfoRules" :model="projectInfoForm" label-width="80px">
+        <el-form-item label="项目名称" prop="projectName">
+          <el-input v-model="projectInfoForm.projectName"></el-input>
+        </el-form-item>
+        <el-form-item label="项目周期" prop="projectTime">
+         <el-date-picker size="large" v-model="projectInfoForm.projectTime" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="项目链接" prop="projectLink">
+          <el-input v-model="projectInfoForm.projectLink"></el-input>
+        </el-form-item>
+        <el-form-item label="项目描述" prop="projectDetail">
+          <el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="projectInfoForm.projectDetail">
+          </el-input>
+        </el-form-item>
+        <el-form-item class="el-item-button">
+          <el-button type="primary" @click="onPersonSave('projectInfoForm','projectDialogVisible','cloneProject',sendProjectInfo)">保存</el-button>
+          <el-button @click="projectDialogVisible = false">取消</el-button>
+        </el-form-item>
+      </el-form>
     </el-dialog>
 
 
-    <el-dialog title="专业技能" :visible.sync="majorDialogVisible" width="30%" center>
-      <span>专业技能</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="majorDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="majorDialogVisible = false">确 定</el-button>
-      </span>
+    <el-dialog title="专业技能" :visible.sync="majorDialogVisible" width="40%" center>
+       <el-form  ref="majorSkillForm" :model="majorSkillForm" :rules="majorSkillRules"  label-width="80px">
+        <el-form-item label="专业技能" prop="major">
+          <el-input type="textarea" :rows="8" placeholder="请输入内容" v-model="majorSkillForm.majorSkill">
+          </el-input>
+        </el-form-item>
+        <el-form-item class="el-item-button">
+          <el-button type="primary" @click="onPersonSave('majorSkillForm','majorDialogVisible','cloneMajor',sendMajorSkill)">保存</el-button>
+          <el-button @click="majorDialogVisible = false">取消</el-button>
+        </el-form-item>
+      </el-form>
     </el-dialog>
 
 
     <el-dialog title="个人评价" :visible.sync="evaluateDialogVisible" width="30%" center>
-      <span>个人评价</span>
+      <el-form  ref="introduceForm" :model="introduceForm" :rules="introduceRules"  label-width="80px">
+        <el-form-item label="个人简介" prop="introduce">
+          <el-input type="textarea" :rows="8" placeholder="请输入内容" v-model="introduceForm.introduce">
+          </el-input>
+        </el-form-item>
+        <el-form-item class="el-item-button">
+          <el-button type="primary" @click="onPersonSave('introduceForm','evaluateDialogVisible','cloneEvaluate',sendPersonIntroduce)">保存</el-button>
+          <el-button @click="evaluateDialogVisible = false">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+
+    <el-dialog title="删除实习经历" :visible.sync="internshipDeleteDialogVisible" width="30%" center>
+      <span>确认删除?</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="evaluateDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="evaluateDialogVisible = false">确 定</el-button>
+        <el-button @click="internshipDeleteDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="onDeleteInternship">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog title="删除项目经历" :visible.sync="projectDeleteDialogVisible" width="30%" center>
+      <span>确认删除?</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="projectDeleteDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="onDeleteProject">确 定</el-button>
+      </span>
+    </el-dialog>
+
+
 
   </div>
 </template>
@@ -237,20 +318,26 @@
         projectDialogVisible: false,
         majorDialogVisible: false,
         evaluateDialogVisible: false,
+        internshipDeleteDialogVisible:false,
+        projectDeleteDialogVisible:false,
 
         ...resumeData,
 
         clonePerson: null,
         cloneEducation: null,
         cloneInternship: [],
-        cloneProject: null,
+        cloneInternshipNew:[],
+        cloneProject: [],
         cloneMajor: null,
         cloneEvaluate: null,
         isPersonResumeEdit: false,
         isEducationEdit: false,
         isInternshipEdit: false,
-        isInternshipEditIndex:null,
+        isInternshipEditIndex: null,
+        isProjectEdit:false,
+        isProjectEditIndex:null,
         internshipHover: false,
+        isEditMajor:false
 
 
       }
@@ -275,19 +362,19 @@
           title: '项目经历',
           dialog: 'projectDialogVisible',
           cloneData: this.cloneProject,
-          // editData:this.editEducation
+          editData:this.onEditProject
         }, {
           className: 'major-skill',
           title: '专业技能',
           dialog: 'majorDialogVisible',
           cloneData: this.cloneMajor,
-          // editData:this.editEducation
+          editData:this.onEditMajor
         }, {
           className: 'person-evaluate',
           title: '个人评价',
           dialog: 'evaluateDialogVisible',
           cloneData: this.cloneEvaluate,
-          // editData:this.editEducation
+          editData:this.onEditIntroduce
         }]
       }
     },
@@ -303,9 +390,28 @@
     mounted() {},
     beforeDestroy() {},
     methods: {
-
+      cancelInternship(){ 
+        this.internshipDialogVisible = false
+      },
+      onDeleteInternship(){
+        this.internshipDeleteDialogVisible = false;
+        this.cloneInternship.splice(this.deleteInternshipIndex,1)
+        this.sendInternshipInfo(this.cloneInternship,'internshipDeleteDialogVisible')
+      },
+      onDeleteProject(){
+        this.projectDeleteDialogVisible = false;
+        this.cloneProject.splice(this.deleteProjectIndex,1)
+        this.sendProjectInfo(this.cloneProject,'projectDeleteDialogVisible')
+      },
+      openDelProjectDialog(dialog,index){
+        this[dialog] = true;
+        this.deleteProjectIndex = index;
+      },
+      openDelInternshipDialog(dialog,index){
+        this[dialog] = true;
+        this.deleteInternshipIndex = index;
+      },
       onInternshipMouseEnter(e) {
-        console.log(e.target.className);
         e.target.classList.add('active')
       },
       onInternshipMouseLeave(e) {
@@ -320,11 +426,13 @@
           }
         }).then((res) => {
           if (res.statusCode == 200) {
-            console.log(res)
             this.clonePerson = JSON.parse(res.data.personinfo);
-            this.cloneEducation = JSON.parse(res.data.educationinfo)
-            this.cloneInternship = JSON.parse(res.data.internshipinfo).data || [];
-            console.log(this.cloneInternship)
+            this.cloneEducation = JSON.parse(res.data.educationinfo);
+            this.cloneInternship = JSON.parse(res.data.internshipinfo) && JSON.parse(res.data.internshipinfo).data || [];
+            this.cloneProject = JSON.parse(res.data.projectinfo) && JSON.parse(res.data.projectinfo).data || [];
+           
+            this.cloneMajor = JSON.parse(res.data.majorskill) && JSON.parse(res.data.majorskill).data.majorSkill.split('//') || [];
+            this.cloneEvaluate = JSON.parse(res.data.introduce) && JSON.parse(res.data.introduce).data.introduce.split('//') || [];
           }
 
         })
@@ -332,22 +440,39 @@
       onEditPersonInfo(dialog) { //点击编辑按钮打开编辑弹窗
         this.isPersonResumeEdit = true;
         this[dialog] = true;
-        this.personInfoForm = this.clonePerson;
+        this.personInfoForm = deepClone(this.clonePerson);
       },
       onEditEducation(dialog) {
         this.isEducationEdit = true;
         this[dialog] = true;
-        this.educationInfoForm = this.cloneEducation;
+        this.educationInfoForm = deepClone(this.cloneEducation);
       },
-      onEditInternship(dialog,ele,index) {
+      onEditInternship(dialog, ele, index) {
         this.isInternshipEditIndex = index;
         this.isInternshipEdit = true;
         this[dialog] = true;
-        this.internshipInfo = ele;
+        this.internshipInfo = deepClone(ele);
       },
-      addInternshipData(dialog){ 
-         
-        this[dialog] = true; 
+      onEditProject(dialog, ele, index){//编辑项目经历
+        this.isProjectEditIndex = index;
+        this.isProjectEdit = true;
+        this[dialog] = true;
+        this.projectInfoForm = deepClone(ele);
+      },
+      onEditMajor(dialog, ele, index){ 
+        this.isEditMajor = true;
+        this[dialog] = true;
+        this.majorSkillForm.majorSkill= deepClone(this.cloneMajor).toString();
+      },
+      onEditIntroduce(dialog, ele, index){
+        this.isEditIntroduce = true;
+        this[dialog] = true;
+        this.introduceForm.introduce= deepClone(this.cloneEvaluate).toString();
+      },
+      addInternshipData(dialog) {//新增实习经历按钮点击事件
+        this[dialog] = true;
+        this.isInternshipEdit = false;
+        this.resetFormInfo(this.internshipInfo);
       },
       onAddInfoShow(e, item) { //点击添加按钮打开添加弹窗
         this[item.dialog] = true
@@ -360,19 +485,20 @@
 
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            if(formName == 'internshipInfo'){//如果编辑窗口是实习经历，用数组存储数据
-              if(this.isInternshipEdit&& this.isInternshipEditIndex!=null){
-                this[cloneObj].splice(this.isInternshipEditIndex,1,deepClone(this[formName]))
-              }else{
-               this[cloneObj].push(deepClone(this[formName])); //深度克隆，数据备份
+            if (formName == 'internshipInfo' || formName == 'projectInfoForm') { //如果编辑窗口是实习经历，用数组存储数据
+              if (this.isInternshipEdit && this.isInternshipEditIndex != null ||
+              this.isProjectEdit && this.isProjectEditIndex != null) {
+                this[cloneObj].splice(this.isInternshipEditIndex || this.isProjectEditIndex, 1, deepClone(this[formName]))
+              } else {
+                this[cloneObj].push(deepClone(this[formName])); //深度克隆，数据备份
               }
-               callback(this[cloneObj], formName)
-            }else{
+              callback(this[cloneObj], formName)
+            } else {
               this[cloneObj] = deepClone(this[formName]); //深度克隆，数据备份
               console.log(this[cloneObj])
               callback(this[formName], formName)
             }
-            
+
             this[dialog] = false
           } else {
             return false;
@@ -381,8 +507,13 @@
         });
       },
 
-      resetForm(formName) { //重置信息表单
-        this.$refs[formName].resetFields();
+      resetFormRule(formName) { //重置信息表单
+        this.$refs[formName]&&this.$refs[formName].resetFields();
+      },
+      resetFormInfo(obj){
+        for(let i in obj){
+            obj[i] = ''
+        }
       },
       sendPersonInfo(data, formName) { //把个人信息数据提交给服务器
         this.$ajax({
@@ -407,7 +538,7 @@
               duration: 1500
             });
           }
-          this.resetForm(formName)
+          this.resetFormRule(formName)
 
         })
       },
@@ -434,11 +565,15 @@
               duration: 1500
             });
           }
-          this.resetForm(formName)
+          this.resetFormRule(formName)
 
         })
       },
       sendInternshipInfo(data, formName) {
+        let reg = /\s/g;
+        for (let i = 0; i < data.length; i++) {
+          data[i].workContent = data[i].workContent.replace(reg, '');
+        }
         this.$ajax({
           method: 'post',
           url: this.isInternshipEdit ? 'editInternshipInfo' : 'addInternshipInfo', //判断是编辑数据还是新增数据
@@ -448,7 +583,37 @@
           }
         }).then((res) => {
           if (res.statusCode == 200) {
-            console.log(res)
+            this.$message({
+              message: res.message,
+              type: 'success',
+              duration: 1500
+            });
+            this.cloneInternship = this.cloneInternship;
+          } else {
+            this.$message({
+              message: res.message,
+              type: 'error',
+              duration: 1500
+            });
+          }
+          formName&&this.resetFormRule(formName)
+          this.isInternshipEdit = false
+        })
+      },
+      sendProjectInfo(data, formName) {
+        let reg = /\s/g;
+        for (let i = 0; i < data.length; i++) {
+          data[i].projectDetail = data[i].projectDetail.replace(reg, '');
+        }
+        this.$ajax({
+          method: 'post',
+          url: this.isProjectEdit?'editProjectInfo':'addProjectInfo', //判断是编辑数据还是新增数据
+          data: {
+            data,
+            operator: this.$cookie.getCookie('username')
+          }
+        }).then((res) => {
+          if (res.statusCode == 200) {
             this.$message({
               message: res.message,
               type: 'success',
@@ -461,15 +626,75 @@
               duration: 1500
             });
           }
-          this.resetForm(formName)
-          this.isInternshipEdit = false
+          formName&&this.resetFormRule(formName)
+        })
+      },
+      sendMajorSkill(data, formName) {
+        console.log(data,'songbiao')
+        let reg = /\n/g; 
+        data.majorSkill = data.majorSkill.replace(reg, '//');
+        this.cloneMajor = deepClone(data)
+        this.cloneMajor = this.cloneMajor.majorSkill.split('//');
+        this.$ajax({
+          method: 'post',
+          url: this.isEditMajor?'editMajorInfo':'addMajorInfo', //判断是编辑数据还是新增数据
+          data: {
+            data,
+            operator: this.$cookie.getCookie('username')
+          }
+        }).then((res) => {
+          if (res.statusCode == 200) {
+            this.$message({
+              message: res.message,
+              type: 'success',
+              duration: 1500
+            });
+          } else {
+            this.$message({
+              message: res.message,
+              type: 'error',
+              duration: 1500
+            });
+          }
+          formName&&this.resetFormRule(formName)
+        })
+      },
+      sendPersonIntroduce(data, formName) {
+        let reg = /\n/g;
+        let ma = data.introduce.match(reg)
+        data.introduce = data.introduce.replace(reg, '//');
+        this.cloneEvaluate = deepClone(data)
+        this.cloneEvaluate = this.cloneEvaluate.introduce.split('//');
+        this.$ajax({
+          method: 'post',
+          url: this.isEditIntroduce?'editIntroduce':'addIntroduce', //判断是编辑数据还是新增数据
+          data: {
+            data,
+            operator: this.$cookie.getCookie('username')
+          }
+        }).then((res) => {
+          if (res.statusCode == 200) {
+            this.$message({
+              message: res.message,
+              type: 'success',
+              duration: 1500
+            });
+          } else {
+            this.$message({
+              message: res.message,
+              type: 'error',
+              duration: 1500
+            });
+          }
+          formName&&this.resetFormRule(formName)
         })
       }
     },
+    
   }
 </script>
 
-<style style="text/less"  lang="less">
+<style style="text/less" lang="less">
   .wrapper-addResume {
     width: 100%;
     height: 100%;
@@ -522,7 +747,10 @@
     }
 
     .education.active,
-    .internship-experience.active {
+    .internship-experience.active,
+    .project-experience.active,
+    .major-skill.active,
+    .person-evaluate.active{
       background: rgb(250, 250, 250);
       height: fit-content;
       padding: 20px;
@@ -586,7 +814,14 @@
 
         }
 
-        .internship1 {
+        .internship1,.project1{
+          padding: 20px 0px;
+          border-bottom: 1px solid #ccc;
+
+          &:last-of-type {
+            border: none;
+          }
+
           .header {
             margin-bottom: 10px;
 
@@ -601,7 +836,7 @@
             }
 
             span.edit {
-              display:none;
+              display: none;
               float: right;
               color: #008c8c;
               cursor: pointer;
@@ -614,20 +849,34 @@
             line-height: 20px;
           }
         }
-        .internship1.active{
-            .header{
-               span.time {
-                 display: none;
-                float: right;
+
+        .internship1.active,
+        .project1.active {
+          .header {
+            span.time {
+              display: none;
+              float: right;
             }
 
-            span.edit { 
+            span.edit {
+              font-size: 14px;
               display: inline-block;
               float: right;
-              color: #008c8c;
+              color: rgb(0, 179, 138);
               cursor: pointer;
+
+              &>i {
+                font-size: 12px;
+              }
             }
-            }
+          }
+        }
+        .major1,.evaluate1{
+          p{
+            font-weight: 400;
+            line-height: 28px;
+            font-size: 14px;
+          }
         }
       }
     }

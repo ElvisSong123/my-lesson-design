@@ -2,6 +2,7 @@ export default {
             personInfoForm: {
                 name: '',
                 sex: '1',
+                age:'',
                 city: '',
                 phone: '',
                 email: '',
@@ -86,6 +87,45 @@ export default {
                 workContent: [
                   { required: true, message: '请输入实习内容', trigger: 'blur' },
                 ],
+              },
+
+              projectInfoForm:{
+                projectName:'',
+                projectTime:'',
+                projectLink:'',
+                projectDetail:''
+              },
+              projectInfoRules:{
+                projectName: [
+                  { required: true, message: '请输入项目名称', trigger: 'blur' },
+                ],
+                projectTime: [
+                  { required: true, message: '请输入项目开发时间', trigger: 'blur' },
+                ],
+                projectDetail: [
+                {
+                  required: true,
+                  message: '请添加项目描述',
+                  trigger: 'blur',
+                }]
+              },
+
+              majorSkillForm:{
+                majorSkill:''
+              },
+              majorSkillRules:{
+                major: [
+                  {required:false, message: '请输入项目名称', trigger: 'blur' },
+                ]
+              },
+
+              introduceForm:{
+                introduce:''
+              },
+              introduceRules:{
+                major: [
+                  {required:false, message: '请输入项目名称', trigger: 'blur' },
+                ]
               },
 
               

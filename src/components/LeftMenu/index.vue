@@ -38,23 +38,13 @@
           {
             path: '/myResume/addResume',
             name: 'addResume',
-            title: '添加简历',
+            title: '添加/编辑简历',
             parentTitle: '我的简历',
             src: '',
             isItemClick: false,
             children: []
           },
-          {
-            path: '/myResume/updateResume',
-            name: 'updateResume',
-            title: '修改简历',
-            parentTitle: '我的简历',
-
-            src: '',
-            isItemClick: false,
-            children: []
-
-          }, {
+           {
             path: '/myResume/viewResume',
             name: 'viewResume',
             title: '预览简历',
