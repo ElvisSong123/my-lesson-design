@@ -23,11 +23,6 @@ const routes = [{
         component: () => import('@/views/MyResume/component/addResume.vue')
       },
       {
-        path: 'updateResume',
-        name: 'updateResume',
-        component: () => import('@/views/MyResume/component/updateResume.vue')
-      },
-      {
         path: 'viewResume',
         name: 'viewResume',
         component: () => import('@/views/MyResume/component/viewResume.vue')

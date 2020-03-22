@@ -90,10 +90,10 @@
       this.initMenuStyle(this.allMenu, routeName);
     },
     watch: {
-      $route(to, from) {//监听路由变化
-        let routeName = to.path.split('/')[2];
-        this.initMenuStyle(this.allMenu,routeName)
-      }
+      // $route(to, from) {//监听路由变化
+      //   let routeName = to.path.split('/')[2];
+      //   this.initMenuStyle(this.allMenu,routeName)
+      // }
     },
     mounted() {},
     methods: {

@@ -54,7 +54,7 @@
 
 
       </div>
-      <div class="internship-info" v-if="cloneInternship">
+      <div class="internship-info" v-if="cloneInternship.length && cloneInternship[0]">
         <div class="avatar">
           <div class="pic"></div>
           <div class="title">实习经历</div>
@@ -73,7 +73,7 @@
           </div>
         </div>
       </div>
-      <div class="project-info" v-if="cloneProject">
+      <div class="project-info" v-if="cloneProject.length && cloneProject[0]">
         <div class="avatar">
           <div class="pic"></div>
           <div class="title">项目经历</div>
@@ -90,7 +90,7 @@
           </div>
         </div>
       </div>
-      <div class="major-skill-info" v-if="cloneMajor">
+      <div class="major-skill-info" v-if="cloneMajor.length && cloneMajor[0]">
         <div class="avatar">
           <div class="pic"></div>
           <div class="title">专业技能</div>
@@ -102,7 +102,7 @@
             </p>
           </div>
       </div>
-      <div class="introduce-info" v-if="cloneEvaluate">
+      <div class="introduce-info" v-if="cloneEvaluate.length&&cloneEvaluate[0]">
         <div class="avatar">
           <div class="pic"></div>
           <div class="title">个人评价</div>
@@ -154,6 +154,7 @@
           }
         }).then((res) => {
           if (res.statusCode == 200) {
+            
             this.clonePerson = JSON.parse(res.data.personinfo);
             this.cloneEducation = JSON.parse(res.data.educationinfo);
             this.cloneInternship = JSON.parse(res.data.internshipinfo) && JSON.parse(res.data.internshipinfo).data || [];
@@ -164,6 +165,7 @@
               this.cloneProject.length || this.cloneMajor || this.cloneEvaluate) {
               this.haveResume = true
             }
+            console.log(this.cloneEvaluate)
           }
 
         })
