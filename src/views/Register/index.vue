@@ -90,7 +90,6 @@
             if (fileObj) {
               formData.append("imgfile", fileObj, fileObj.name);
               formData.append("imgfile", this.ruleForm.username);
-              console.log(fileObj)
             } else {
               formData.append("imgfile", '');
 

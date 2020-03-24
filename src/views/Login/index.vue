@@ -13,6 +13,12 @@
         <el-form-item class="form-label" label="密码" prop="password">
           <el-input type="password" placeholder="请输入密码" v-model="ruleForm.password"></el-input>
         </el-form-item>
+        <el-form-item class="form-label" label="身份" prop="status">
+          <el-select class="choose-status" v-model="ruleForm.status" placeholder="请选择登录身份">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" style="width:100%" @click="onLogin">登录</el-button>
         </el-form-item>
@@ -38,6 +44,7 @@
         ruleForm: {
           username: '',
           password: '',
+          status:'',
         },
         rules: {
           username: [
@@ -45,11 +52,27 @@
           ],
           password: [
             { required: true, message: '请输入密码', trigger: 'blur' }
+          ],
+          status: [
+            { required: true, message: '请选择身份', trigger: 'blur' }
           ]
         },
-        isRequestLogin: false,
+         options: [{
+          value: '学生',
+          label: '学生'
+        }, {
+          value: '老师',
+          label: '老师'
+        }, {
+          value: '企业用户',
+          label: '企业用户'
+        }, {
+          value: '管理员',
+          label: '管理员'
+        }],
+        isRequestLogin: false,//判断登录状态，加锁处理
         imgURL: '',
-        thro:null
+        thro: null
       }
     },
     computed: {},
@@ -59,42 +82,44 @@
         this.ruleForm.username = this.$route.query.username
       }
       this.getAvatar()
-      this.thro = throttling.throttling(this.getAvatar,1500);
+      this.thro = throttling.throttling(this.getAvatar, 1500);
     },
     mounted() {},
     beforeDestroy() {},
     methods: {
       getAvatar() {
-        axios.get(`http://47.93.33.255/getAvatar?username=${this.ruleForm.username}`, { responseType: 'arraybuffer' })
+        axios.get(`http://localhost:12306/getAvatar?username=${this.ruleForm.username}`, { responseType: 'arraybuffer' })
           .then((res) => {
             this.imgURL = `data: image/jpeg;base64,${btoa(new Uint8Array(res.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))}`;
-        
+
           }, (err) => {
             this.imgURL = ''
           });
       },
       onInput() {
-            this.thro()
+        this.thro()
       },
       goToRegister() {
         this.$router.push({ path: '/applyCount' })
       },
       onLogin() {
         this.$refs['ruleForm'].validate((valid) => {
-          if (valid && !this.isRequestLogin) {
+          if (valid && !this.isRequestLogin) { 
             this.isRequestLogin = true;
             this.$ajax({
               method: 'post',
               url: 'login',
               data: {
                 username: this.ruleForm.username,
-                password: this.ruleForm.password
+                password: this.ruleForm.password,
+                status:this.ruleForm.status
               }
             }).then((res) => {
-              this.$cookie.setCookie('sessionId', res.cookie, 1);
+              this.$cookie.setCookie('sessionId', res.cookie, 1); 
               this.$cookie.setCookie('username', res.username, 1);
               this.$cookie.setCookie('status', res.status, 1);
-              window.sessionStorage.setItem('avatar',this.imgURL)
+              this.$cookie.setCookie('userid', res.userid, 1);
+              window.sessionStorage.setItem('avatar', this.imgURL)
               this.handleInfo(res);
               this.isRequestLogin = false;
             }, (err) => {
@@ -177,7 +202,11 @@
             color: #fff;
             font-size: 16px !important;
             font-weight: bold;
+            
           }
+          .choose-status{
+              width:100% !important;
+            }
 
         }
       }

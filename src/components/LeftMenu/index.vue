@@ -80,7 +80,22 @@
           src: 'icon-tuijianfankui',
           isItemClick: false,
           children: []
-        }]
+        },
+         {
+          path: '/addCompanyInfo',
+          name: 'addCompanyInfo',
+          title: '公司简介',
+          src: 'icon-qiyeshezhi',
+          isItemClick: false,
+          children: []
+        }, {
+          path: '/addJobInfo',
+          name: 'addJobInfo',
+          title: '新增职位',
+          src: 'icon-mianshizhiwei',
+          isItemClick: false,
+          children: []
+        },]
       }
     },
     computed: {},
@@ -90,10 +105,11 @@
       this.initMenuStyle(this.allMenu, routeName);
     },
     watch: {
-      // $route(to, from) {//监听路由变化
-      //   let routeName = to.path.split('/')[2];
-      //   this.initMenuStyle(this.allMenu,routeName)
-      // }
+      $route(to, from) {//监听路由变化,主要是在点击浏览器返回或前进按钮时更新左侧菜单样式
+        let routeName = to.path.split('/');
+        routeName = routeName[routeName.length - 1];
+        this.initMenuStyle(this.allMenu,routeName);
+      }
     },
     mounted() {},
     methods: {

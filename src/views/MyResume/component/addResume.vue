@@ -426,8 +426,8 @@
           }
         }).then((res) => {
           if (res.statusCode == 200) {
-            this.clonePerson = JSON.parse(res.data.personinfo);
-            this.cloneEducation = JSON.parse(res.data.educationinfo);
+            this.clonePerson = JSON.parse(res.data.personinfo) || [];
+            this.cloneEducation = JSON.parse(res.data.educationinfo) || [];
             this.cloneInternship = JSON.parse(res.data.internshipinfo) && JSON.parse(res.data.internshipinfo).data || [];
             this.cloneProject = JSON.parse(res.data.projectinfo) && JSON.parse(res.data.projectinfo).data || [];
            

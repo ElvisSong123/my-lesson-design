@@ -42,6 +42,14 @@ const routes = [{
       path: 'deliveryFeedback',
       name: 'deliveryFeedback',
       component: () => import('@/views/DeliveryFeedback/index.vue')
+    }, {
+      path: 'addCompanyInfo',
+      name: 'addCompanyInfo',
+      component: () => import('@/views/addCompanyInfo/index.vue')
+    }, {
+      path: 'addJobInfo',
+      name: 'addJobInfo',
+      component: () => import('@/views/addJobInfo/index.vue')
     }
 
   ]
@@ -69,7 +77,7 @@ const router = new VueRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from, next) => {//添加导航守卫
   if (to.path == '/login' || to.path == '/applyCount') {
     next();
   } else {

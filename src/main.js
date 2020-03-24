@@ -13,7 +13,14 @@ import cookie from '@/toolsFunc/cookie.js'
 Vue.use(ElementUI);
 Vue.prototype.$ajax = axios;
 Vue.prototype.$cookie = cookie;
-Vue.config.productionTip = false
+Vue.prototype.$showMessage = function(message, type){
+  this.$message({
+    message,
+    type,
+    duration: 1500
+  });
+}
+Vue.config.productionTip = false;
 
 new Vue({
   router,

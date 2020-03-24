@@ -38,7 +38,7 @@
         status: '',
         username: '',
         isRequestLogin: false,
-        imgURL:''
+        imgURL: ''
       }
     },
     computed: {},
@@ -47,18 +47,18 @@
       this.status = this.$cookie.getCookie('status');
       this.username = this.$cookie.getCookie('username');
       this.imgURL = window.sessionStorage.getItem('avatar')
-      if(!this.imgURL){
+      if (!this.imgURL) {
         this.getAvatar()
       }
     },
     mounted() {},
     beforeDestroy() {},
     methods: {
-      getAvatar(){
-         axios.get(`http://47.93.33.255/getAvatar?username=${this.username}`, { responseType: 'arraybuffer' })
+      getAvatar() {
+        axios.get(`http://localhost:12306/getAvatar?username=${this.username}`, { responseType: 'arraybuffer' })
           .then((res) => {
             this.imgURL = `data: image/jpeg;base64,${btoa(new Uint8Array(res.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))}`;
-            window.sessionStorage.setItem('avatar',this.imgURL);
+            window.sessionStorage.setItem('avatar', this.imgURL);
           }, (err) => {
             this.imgURL = ''
           });
@@ -75,7 +75,6 @@
         }
       },
       hideSelect() {
-        console.log('leave');
         this.$refs.select.classList.remove('active')
       },
       signOutLogin() {
@@ -94,11 +93,15 @@
               type: 'success',
               duration: 1000
             });
+            this.$cookie.deleteCookie('sessionId');//退出登录，删除cookie中的残留数据
             this.$cookie.deleteCookie('sessionId');
-             window.sessionStorage.setItem('avatar','')
-            setTimeout(()=>{
+            this.$cookie.deleteCookie('username');
+            this.$cookie.deleteCookie('status');
+            this.$cookie.deleteCookie('userid');
+            window.sessionStorage.setItem('avatar', '')
+            setTimeout(() => {
               this.$router.push('/login')
-            },1000)
+            }, 1000)
           }
         }, (err) => {
           this.$message.error('服务器开小差');
@@ -149,7 +152,8 @@
       align-items: center;
       color: #fff;
 
-      i,img{
+      i,
+      img {
         background: rgb(184, 211, 255);
         width: 35px;
         height: 35px;

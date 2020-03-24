@@ -1,5 +1,5 @@
 <template>
-      <div class="wrapper">
+   <div class="wrapper">
     <div class="remindInfo" v-if="!haveResume">
       <div class="remind">暂无简历
         <span @click="$router.push({path:'/myResume/addResume'})">点击添加</span>
@@ -165,7 +165,6 @@
               this.cloneProject.length || this.cloneMajor || this.cloneEvaluate) {
               this.haveResume = true
             }
-            console.log(this.cloneEvaluate)
           }
 
         })
@@ -202,7 +201,7 @@
       padding: 20px;
       box-sizing: border-box;
       width: 60%;
-      height: 500px;
+      height:90%;
       box-shadow: 0 0 10px 3px #ccc;
       position: absolute;
       left: 0;
