@@ -14,13 +14,21 @@
       <div class="show" v-else>
         <div class="company-logo">
           <div class="name">
-            <span>{{cloneCompanyIntroduce.name}}</span>
+            <div class="logo">
+              <div class="left">
+                <img :src=companyAvatar alt="">
+              </div>
+              <div class="right">
+                <p>{{cloneCompanyIntroduce.name}}</p>
+                <p>{{cloneCompanyIntroduce.slogan}}</p>
+              </div>
+            </div>
             <div class="edit" @click="onEditCompanyInfo()">
               <i class="iconfont-ats icon-jianlixiangqing-bianji"></i>
               编辑
             </div>
           </div>
-          <div class="signWord">{{cloneCompanyIntroduce.slogan}}</div>
+
         </div>
         <div class="company-introduce">
           <div class="introduce">
@@ -96,16 +104,16 @@
           </div>
         </div>
       </div>
-      <div class="img-box" v-if="imgURL.length">
+      <div class="img-box">
         <div class="box" v-for="(item,index) in imgURL" :key="index">
           <img :src=item alt="">
           <span :key="index" @click="onDelImg(index)">
             <i class="iconfont-ats  icon-shanchu"></i>
           </span>
         </div>
-        <el-button class="submit" type="success" @click="submitImg">{{imgUrlArr.length ? '重新上传':'确定上传'}}</el-button>
+        <el-button class="submit" type="success" @click="submitImg">{{imgUrlArr.length ? '重新上传':'点击上传'}}</el-button>
       </div>
-      <div class="img-box">
+      <div class="img-box" v-if="imgUrlArr.length">
         <div class="box" v-for="(item,index) in imgUrlArr" :key="index">
           <img :src=item alt="">
         </div>
@@ -202,6 +210,7 @@
     props: {},
     data() {
       return {
+        companyAvatar: '',
         imgURL: [],
         imgFile: [],
         imgUrlArr: [],
@@ -250,6 +259,7 @@
     computed: {},
     watch: {},
     created() {
+      this.companyAvatar = window.sessionStorage.getItem('avatar')
       this.getCompanyInfo();
       this.getCompanyImg();
     },
@@ -257,6 +267,7 @@
     beforeDestroy() {},
     methods: {
       getCompanyImg() {
+        this.imgUrlArr = [];
         this.$ajax({
           method: 'post',
           url: `getCompanyImg?userid=${this.$cookie.getCookie('userid')}`,
@@ -290,7 +301,10 @@
         }).then((res) => {
           if (res) {
             this.$showMessage(res.message, 'success');
-            this.getCompanyImg();
+            setTimeout(() => {
+              this.getCompanyImg();
+
+            }, 1000);
           }
         }, (err) => {
           this.$message.error('服务器开小差');
@@ -303,10 +317,6 @@
       onDelImg(index) {
         this.imgURL.splice(index, 1);
         this.imgFile.splice(index, 1);
-        if (this.imgURL.length == 0) {
-          this.imgFile = [];
-          this.submitImg()
-        }
       },
       /**
        * @description: 生成二进制图片格式
@@ -403,6 +413,7 @@
       async getCompanyInfo() {
         let res = await this.getData('getCompanyInfo');
         this.cloneCompanyIntroduce = JSON.parse(res.data[0].company_infos);
+        this.$store.commit('addCompanyInfo', this.cloneCompanyIntroduce); //公司信息存入vuex,用于共享。
         this.cloneCompanyDevelop = JSON.parse(res.data[0].company_develop).data;
       },
       addCompanyInfo() {
@@ -523,12 +534,30 @@
           justify-content: space-between;
           margin-bottom: 10px;
 
-          span {
-            font-size: 30px;
-            font-weight: bold;
+          .logo {
+            display: flex;
+            align-items: center;
+
+            .left {
+              img {
+                width: 100px;
+                height: 100px;
+                vertical-align: middle;
+                border-radius: 50%;
+                margin-right: 20px;
+              }
+            }
+
+            .right {
+              p:first-of-type {
+                font-size: 30px;
+                margin-bottom: 5px;
+              }
+            }
+
           }
 
-          div {
+          .edit {
             color: rgb(0, 179, 138);
             cursor: pointer
           }

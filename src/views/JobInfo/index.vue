@@ -31,17 +31,20 @@
       <el-table class="job-table" :data="tableData" stripe style="width: 100%">
 
         <el-table-column label="公司名称" width="180" align="center">
-          <div class="company-name" slot-scope="{ row }" style="cursor:pointer" @click="openJobDetail">
-            {{row.companyName}}
+          <div class="company-name" slot-scope="{ row }" style="cursor:pointer" @click="openCompanyDetail(row.corp_id)">
+            {{row.name}}
           </div>
         </el-table-column>
         <el-table-column prop="address" label="地址" align="center">
         </el-table-column>
-        <el-table-column prop="financ" label="融资情况" align="center">
+        <el-table-column prop="finance" label="融资情况" align="center">
         </el-table-column>
-        <el-table-column prop="workField" label="行业领域" align="center">
+        <el-table-column prop="field" label="行业领域" align="center">
         </el-table-column>
-        <el-table-column prop="recruitPositions" label="在招职位" align="center">
+        <el-table-column label="在招职位" align="center">
+          <div class="company-name" slot-scope="{ row }" style="cursor:pointer" @click="openJobDetail(row.job_id)">
+            {{row.jobName}}
+          </div>
         </el-table-column>
         <el-table-column label="操作" width="180" align="center">
           <el-button type="success">投递</el-button>
@@ -49,21 +52,21 @@
       </el-table>
       <!-- 分页插件 -->
       <div class="block">
-        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[100, 200, 300, 400]" :page-size="100" layout="total, sizes, prev, pager, next, jumper" :total="400">
+        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 20]" :page-size="5" layout="total, sizes, prev, pager, next, jumper" :total="allJobDataCount">
         </el-pagination>
       </div>
     </div>
 
     <!-- 抽屉弹框 -->
-    <el-drawer :visible.sync="drawer" :direction="direction" size="100%">
+    <el-drawer :visible.sync="drawerCompanyVisible" :direction="direction" size="100%">
       <div slot="title" style="font-size:20px">公司详情</div>
       <div class="content">
         <div class="company-logo">
           <div class="background">
             <img src="https://www.lgstatic.com/thumbnail_300x300/i/image/M00/72/A0/CgpFT1o8uG6AV6iJAABIpIC8ytU647.png" alt="">
             <div class="right">
-              <div class="name">湖南理财网</div>
-              <div class="signWord">小恩爱是一家设计与技术并重的互联网公司，在这儿每个人都创造了非凡的价值！</div>
+              <div class="name">{{companyIntroduce.name}}</div>
+              <div class="signWord">{{companyIntroduce.slogan}}</div>
             </div>
           </div>
         </div>
@@ -71,8 +74,7 @@
           <div class="left">
             <div class="introduce">
               <div class="title">公司介绍</div>
-              <div class="content">小恩爱开创于2011年，是全球领先的情侣应用产品，是专为情侣打造的私密应用，覆盖情侣用户超过1.5亿，小恩爱为情侣提供私密互动空间、情侣社区、情侣消费指南等一站式服务。核心团队均来自百度，
-                腾讯，阿里，新浪等顶尖互联网公司，让天下有情人终成眷属是我们的使命。</div>
+              <div class="content">{{companyIntroduce.introduce}}</div>
             </div>
 
             <div class="info">
@@ -80,19 +82,19 @@
               <div class="content">
                 <p>
                   <i class="type"></i>
-                  社交，游戏
+                  {{companyIntroduce.field}}
                 </p>
                 <p>
                   <i class="money"></i>
-                  上市公司
+                  {{companyIntroduce.finance}}
                 </p>
                 <p>
                   <i class="people-count"></i>
-                  150-200
+                  {{companyIntroduce.scale}}
                 </p>
                 <p>
                   <i class="address"></i>
-                  深圳
+                  {{companyIntroduce.address}}
                 </p>
               </div>
             </div>
@@ -103,8 +105,8 @@
               <div class="title" style="margin-bottom:20px">发展历程</div>
               <div class="block">
                 <el-timeline>
-                  <el-timeline-item v-for="(activity, index) in activities" :key="index" :icon="activity.icon" :type="activity.type" :color="activity.color" :size="activity.size" :timestamp="activity.timestamp">
-                    {{activity.content}}
+                  <el-timeline-item v-for="(activity, index) in companyDevelop" :key="index" :icon="activity.icon" :type="activity.type" color="#0bbd87" :size="activity.size" :timestamp="activity.time">
+                    {{activity.event}}
                   </el-timeline-item>
                 </el-timeline>
               </div>
@@ -112,13 +114,34 @@
           </div>
         </div>
         <div class="company-img">
+          <div class="title">企业文化</div>
           <el-carousel indicator-position="outside">
-            <el-carousel-item v-for="item in imgArr" :key="item">
+            <el-carousel-item v-for="item in imgUrlArr" :key="item">
               <img style="width:100%;height:100%" :src=item alt="">
             </el-carousel-item>
           </el-carousel>
         </div>
 
+      </div>
+    </el-drawer>
+
+    <el-drawer class="job-drawer" :visible.sync="drawerJobVisible" :direction="direction" size="100%">
+      <div slot="title" style="font-size:20px">职位详情</div>
+      <div class="content">
+        <div class="header">
+          {{jobDetailData.jobName}}（{{jobDetailData.address}}）
+          <span>{{jobDetailData.money}}</span>
+        </div>
+        <div class="body">
+          <div class="job-detail">
+            <p>职位描述</p>
+            {{jobDetailData.jobDescribe}}
+          </div>
+          <div class="job-require">
+            <p>岗位要求</p>
+            {{jobDetailData.jobRequire}}
+          </div>
+        </div>
       </div>
     </el-drawer>
   </div>
@@ -132,74 +155,112 @@
     props: {},
     data() {
       return {
-        drawer: false,
+        nowPage: 1,
+        pageCount: 5,
+        allJobDataCount: 0,
+        jobDetailData: {},
+        drawerJobVisible: false,
+        drawerCompanyVisible: false,
+        companyIntroduce: '',
+        companyDevelop: '',
         direction: 'ttb',
-        currentPage: 10,
+        currentPage: 1,
         jobSearch: {
           place: '',
           financ: '',
           job: ''
         },
-        imgArr:['https://dss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2806979248,3096179224&fm=26&gp=0.jpg',
-        'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=110038289,1629420447&fm=111&gp=0.jpg',
-        'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3538964778,1567388528&fm=11&gp=0.jpg',
-        'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2908843824,328016317&fm=11&gp=0.jpg'],
-        tableData: [{
-          companyName: '湖南理财网',
-          financ: 'A轮',
-          address: '上海市普陀区金沙江路 1518 弄',
-          workField: '互联网',
-          recruitPositions: '前端开发工程师'
-        }, {
-          companyName: '湖南理财网',
-          financ: 'A轮',
-          address: '上海市普陀区金沙江路 1518 弄',
-          workField: '互联网',
-          recruitPositions: '前端开发工程师'
-        }, {
-          companyName: '湖南理财网',
-          financ: 'A轮',
-          address: '上海市普陀区金沙江路 1518 弄',
-          workField: '互联网',
-          recruitPositions: '前端开发工程师'
-        }, {
-          companyName: '湖南理财网',
-          financ: 'A轮',
-          address: '上海市普陀区金沙江路 1518 弄',
-          workField: '互联网',
-          recruitPositions: '前端开发工程师'
-        }],
-
-        activities: [{
-          content: '支持使用图标',
-          timestamp: '2018-04-12 20:46',
-          size: 'large',
-          type: 'primary',
-          icon: 'el-icon-more'
-        }, {
-          content: '支持自定义颜色',
-          timestamp: '2018-04-03 20:46',
-          color: '#0bbd87'
-        }, {
-          content: '支持自定义尺寸',
-          timestamp: '2018-04-03 20:46',
-          size: 'large'
-        }, {
-          content: '默认样式的节点',
-          timestamp: '2018-04-03 20:46'
-        }]
+        imgUrlArr: [],
+        tableData: [],
       }
     },
     computed: {},
     watch: {},
-    created() {},
+    created() {
+      this.getJobData();
+      this.getJobCount();
+    },
     mounted() {},
     beforeDestroy() {},
     methods: {
-      handleSizeChange() {},
-      handleCurrentChange() {},
-      openJobDetail() {
-        this.drawer = true;
+      async getJobCount() {
+        let allJobDataCount = await this.getData('getJobDataCount');
+        this.allJobDataCount = allJobDataCount.data[0]['count(1)']
+      },
+      handleSizeChange(e) {
+        this.pageCount = e;
+        this.nowPage = 1;
+        this.getJobData();
+      },
+      handleCurrentChange(e) {
+        this.nowPage = e;
+        this.getJobData();
+      },
+      /**
+       * @description: 打开公司详情弹窗
+       * @param {type} 
+       * @return: 
+       */
+      openCompanyDetail(corpId) {
+        this.drawerCompanyVisible = true;
+        this.getCompanyImg(corpId);
+        this.getCompanyInfo(corpId);
+      },
+      /**
+       * @description: 打开职位详情弹窗
+       * @param {type} 
+       * @return: 
+       */
+      openJobDetail(jobId) {
+        this.drawerJobVisible = true;
+        console.log(jobId);
+        this.jobDetailData = this.tableData.filter((ele) => {
+          return ele.job_id == jobId
+        })[0]
+        console.log(this.jobDetailData, '1234')
+      },
+      getCompanyImg(corpId) {
+        this.imgUrlArr = [];
+        this.$ajax({
+          method: 'post',
+          url: `getCompanyImg?userid=${corpId}`,
+        }).then((res) => {
+          if (res) {
+            this.imgUrlArr = res;
+          }
+        }, (err) => {
+          this.$message.error('服务器开小差');
+        })
+      },
+      async getCompanyInfo(corpId) {
+        let res = await this.getData('getCompanyInfo', {}, corpId);
+        this.companyIntroduce = JSON.parse(res.data[0].company_infos);
+        this.companyDevelop = JSON.parse(res.data[0].company_develop).data;
+      },
+      /**
+       * @description: 获取职位信息
+       * @param {type} 
+       * @return: 
+       */
+      async getJobData() {
+        let res = await this.getData('getJobInfoByPage', { nowPage: this.nowPage, pageCount: this.pageCount });
+        if (res.data) {
+          res = res.data.map((ele, index) => {
+            let job_detail = JSON.parse(ele.job_detail);
+            return { ...ele, ...job_detail }
+          });
+        }
+        this.tableData = res;
+      },
+      getData(url, data = {}, userid) {
+        return this.$ajax({
+          method: 'post',
+          url,
+          data: {
+            data,
+            userid
+          }
+        })
       },
 
     },
@@ -208,6 +269,8 @@
 
 <style style="text/less"  lang="less">
   .job-wrapper {
+    height:100%;
+    overflow: auto;
     .search-screen {
       margin-bottom: 20px;
 
@@ -241,9 +304,10 @@
     }
 
     .el-drawer__wrapper {
-      .el-drawer.ttb{
+      .el-drawer.ttb {
         overflow: auto !important;
       }
+
       .content {
         padding: 20px;
         overflow: auto;
@@ -282,6 +346,7 @@
 
         .company-introduce {
           display: flex;
+          margin-bottom: 20px;
 
           .left {
             width: 50%;
@@ -351,18 +416,89 @@
           }
         }
 
-        .company-img{
-          width:98%;
+        .company-img {
+          .title {
+            height: 30px;
+            line-height: 30px;
+            font-size: 20px;
+            position: relative;
+            margin-bottom: 20px;
+
+            &::after {
+              content: '';
+              position: absolute;
+              top: 50%;
+              left: 100px;
+              width: 90%;
+              height: 1px;
+              background: rgb(232, 232, 232)
+            }
+          }
+
+          width:100%;
           height:600px;
-          margin:0 auto;
-          .el-carousel.el-carousel--horizontal{
-            height:100%;
+
+          .el-carousel.el-carousel--horizontal {
+
+            margin: 0 auto;
+            width: 80%;
+            height: 90%;
             overflow: hidden;
-            .el-carousel__container{
-            height:95%;
+
+            .el-carousel__container {
+              height: 95%;
+            }
           }
+
+        }
+      }
+    }
+
+    .el-drawer__wrapper.job-drawer {
+      .content {
+        width: 80%;
+        margin: 0 auto;
+
+        .header {
+          width: 100%;
+          height: 100px;
+          line-height: 100px;
+          background: rgb(242, 245, 244);
+          text-align: center;
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 20px;
+
+          span {
+            font-size: 20px;
+            color: rgb(253, 95, 57);
+
           }
-          
+        }
+
+        .body {
+
+          .job-detail,
+          .job-require {
+            line-height: 30px;
+            margin: 10px 0px;
+
+            p {
+              font-size: 16px;
+              font-weight: 400;
+              position: relative;
+
+              &::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 70px;
+                width: 90%;
+                height: 1px;
+                background: #ccc;
+              }
+            }
+          }
         }
       }
     }

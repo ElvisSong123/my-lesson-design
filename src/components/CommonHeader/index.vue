@@ -46,10 +46,8 @@
     created() {
       this.status = this.$cookie.getCookie('status');
       this.username = this.$cookie.getCookie('username');
-      this.imgURL = window.sessionStorage.getItem('avatar')
-      if (!this.imgURL) {
-        this.getAvatar()
-      }
+      this.getAvatar()
+      
     },
     mounted() {},
     beforeDestroy() {},
