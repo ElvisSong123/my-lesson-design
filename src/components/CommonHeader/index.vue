@@ -14,7 +14,6 @@
         </div>
         <div class="operation">
           <i class="iconfont-ats icon-xiala" @click="showSelect"></i>
-
         </div>
       </div>
 
@@ -181,7 +180,7 @@
 
         i {
           background: none;
-
+          cursor: pointer;
           margin-right: 10px;
           color: #B9D1FF;
           font-size: 18px;
@@ -197,9 +196,9 @@
     transition: all 0.3s linear;
     z-index: 100;
     opacity: 0;
-    top: 0px;
+    top: -3px;
     right: 10px;
-    width: 80px;
+    width: 100px;
     height: fit-content;
     background: #fff;
     cursor: pointer;
@@ -208,7 +207,7 @@
     border: 1px solid #ccc;
 
     li {
-      padding: 5px 10px;
+      padding: 10px 20px;
       border-bottom: 1px solid #ccc;
 
       &:hover {

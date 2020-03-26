@@ -140,6 +140,9 @@
             type: 'success',
             duration: 3000
           });
+          setTimeout(()=>{
+            this.$router.push('/login')
+          },1000)
         } else {
           this.$message({
             showClose: true,
