@@ -110,6 +110,7 @@
               method: 'post',
               url: 'applyCount',
               data: {
+                status:this.ruleForm.status,
                 name: this.ruleForm.name,
                 number: this.ruleForm.number,
                 email: this.ruleForm.email

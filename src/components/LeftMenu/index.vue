@@ -105,7 +105,15 @@
           children: [],
           whoCanSee: '企业用户'
         },{
-          path: '/useInfo',
+          path: '/candidate',
+          name: 'candidate',
+          title: '候选人',
+          src: 'icon-houxuanren',
+          isItemClick: false,
+          children: [],
+          whoCanSee: '企业用户'
+        },{
+          path: '/userInfo',
           name: 'userInfo',
           title: '用户信息',
           src: 'icon-lijimianshi',
@@ -120,7 +128,8 @@
           isItemClick: false,
           children: [],
           whoCanSee: '管理员'
-        },]
+        },
+        ]
       }
     },
     computed: {},

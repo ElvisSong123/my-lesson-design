@@ -43,7 +43,7 @@
         ruleForm: {
           username: '',
           password: '',
-          status:'',
+          status: '',
         },
         rules: {
           username: [
@@ -56,7 +56,7 @@
             { required: true, message: '请选择身份', trigger: 'blur' }
           ]
         },
-         options: [{
+        options: [{
           value: '学生',
           label: '学生'
         }, {
@@ -69,7 +69,7 @@
           value: '管理员',
           label: '管理员'
         }],
-        isRequestLogin: false,//判断登录状态，加锁处理
+        isRequestLogin: false, //判断登录状态，加锁处理
         imgURL: '',
         thro: null
       }
@@ -77,6 +77,8 @@
     computed: {},
     watch: {},
     created() {
+      console.log(this.$router)
+
       if (this.$route.query.username) {
         this.ruleForm.username = this.$route.query.username
       }
@@ -102,7 +104,7 @@
       },
       onLogin() {
         this.$refs['ruleForm'].validate((valid) => {
-          if (valid && !this.isRequestLogin) { 
+          if (valid && !this.isRequestLogin) {
             this.isRequestLogin = true;
             this.$ajax({
               method: 'post',
@@ -110,21 +112,13 @@
               data: {
                 username: this.ruleForm.username,
                 password: this.ruleForm.password,
-                status:this.ruleForm.status
+                status: this.ruleForm.status
               }
             }).then((res) => {
-              // let username = this.ruleForm.username;
-              // this.$cookie.setCookie(`${username}-sessionId`, res.cookie, 1); 
-              // this.$cookie.setCookie(`${username}-username`, res.username, 1);
-              // this.$cookie.setCookie(`${username}-status`, res.status, 1);
-              // this.$cookie.setCookie(`${username}-userid`, res.userid, 1);
-
-              this.$cookie.setCookie(`sessionId`, res.cookie, 1); 
+              this.$cookie.setCookie(`sessionId`, res.cookie, 1);
               this.$cookie.setCookie(`username`, res.username, 1);
               this.$cookie.setCookie(`status`, res.status, 1);
               this.$cookie.setCookie(`userid`, res.userid, 1);
-              // this.$store.commit('addCurrentUser',username);
-              // console.log(this.$store.state.currentUser)
               window.sessionStorage.setItem('avatar', this.imgURL)
               this.handleInfo(res);
               this.isRequestLogin = false;
@@ -145,7 +139,9 @@
             type: 'success',
             duration: 1500
           });
-          this.$router.push({ path: '/' })
+          let path = this.redirect(this.ruleForm.status);
+          console.log(path)
+          this.$router.push({ path })
         } else {
           this.$message({
             showClose: true,
@@ -156,6 +152,19 @@
             customClass: 'my-message'
           });
         }
+      },
+      redirect(status) {//根据不同的登录身份进行不同的路由跳转
+        let direct = '/'
+        if (status == '管理员') {
+          direct = '/userInfo'
+        } else if (status == '学生') {
+          direct = '/myResume/viewResume'
+        } else if (status == '企业用户') {
+          direct = '/addCompanyInfo'
+        } else {
+          direct = '/addCompanyInfo'
+        }
+        return direct;
       }
     },
   }
@@ -208,11 +217,12 @@
             color: #fff;
             font-size: 16px !important;
             font-weight: bold;
-            
+
           }
-          .choose-status{
-              width:100% !important;
-            }
+
+          .choose-status {
+            width: 100% !important;
+          }
 
         }
       }

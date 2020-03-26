@@ -3,23 +3,44 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home/index.vue'
 import axios from '@/toolsFunc/axios.js'
 Vue.use(VueRouter)
-// let sessionId = document.cookie.split(';');
-//     sessionId = sessionId.filter((ele) => {
-//       return ele.includes('status');
-//     })
-// sessionId = sessionId[0] && sessionId[0].split('=')[1].trim()
-// console.log(sessionId,'status')
+let sessionId = document.cookie.split(';');
+    sessionId = sessionId.filter((ele) => {
+      return ele.includes('status');
+  })
+sessionId = sessionId[0] && sessionId[0].split('=')[1].trim()
+let direct = '';
+console.log(sessionId,'status123')
+if(sessionId == '管理员'){
+  direct = '/useInfo'
+}else if(sessionId == '学生'){
+  direct = '/myResume/viewResume'
+}else if(sessionId == '企业用户'){
+  direct = '/addCompanyInfo'
+}else{
+  direct = '/addCompanyInfo'
+}
+
+let routeProtect = (sessionId,nowStatus)=>{
+  return (to,from,next)=>{
+    if(sessionId == nowStatus){
+      next();
+    }else{
+      location.href = '/'
+    }
+  }
+}
+
 const routes = [{
   path: '/',
   name: 'home',
   component: Home,
-  redirect: '/myResume/viewResume',
+  redirect: direct,
   children: [
-   
     {
       path: 'myResume',
       name: 'myResume',
       component: () => import('@/views/MyResume/index.vue'),
+      beforeEnter:routeProtect(sessionId,'学生'),
       // redirect: '/myResume/addResume',
       children: [
       {
@@ -36,30 +57,44 @@ const routes = [{
     {
       path: 'jobInfo',
       name: 'jobInfo',
-      component: () => import('@/views/JobInfo/index.vue')
+      component: () => import('@/views/JobInfo/index.vue'),
+      beforeEnter:routeProtect(sessionId,'学生'),
     },
     {
       path: 'recruitStatistic',
       name: 'recruitStatistic',
-      component: () => import('@/views/RecruitStatistic/index.vue')
+      component: () => import('@/views/RecruitStatistic/index.vue'),
+      beforeEnter:routeProtect(sessionId,'学生'),
     },
     {
       path: 'deliveryFeedback',
       name: 'deliveryFeedback',
-      component: () => import('@/views/DeliveryFeedback/index.vue')
+      component: () => import('@/views/DeliveryFeedback/index.vue'),
+      beforeEnter:routeProtect(sessionId,'学生'),
     }, {
       path: 'addCompanyInfo',
       name: 'addCompanyInfo',
-      component: () => import('@/views/addCompanyInfo/index.vue')
+      component: () => import('@/views/addCompanyInfo/index.vue'),
+      beforeEnter:routeProtect(sessionId,'企业用户'),
     }, {
       path: 'addJobInfo',
       name: 'addJobInfo',
-      component: () => import('@/views/addJobInfo/index.vue')
+      component: () => import('@/views/addJobInfo/index.vue'),
+      beforeEnter:routeProtect(sessionId,'企业用户'),
+    }, {
+      path: 'userInfo',
+      name: 'userInfo',
+      component: () => import('@/views/userInfo/index.vue'),
+      beforeEnter:routeProtect(sessionId,'管理员'),
+    }, {
+      path: 'userApply',
+      name: 'userApply',
+      component: () => import('@/views/userApply/index.vue'),
+      beforeEnter:routeProtect(sessionId,'管理员'),
     }
 
   ]
 },
-
 {
   path: '/login',
   name: 'login',
@@ -73,6 +108,9 @@ const routes = [{
   path: '/applyCount',
   name: 'applyCount',
   component: () => import('@/views/applyCount/index.vue')
+},{
+  path:'*',
+  component: () => import('@/views/404page/index.vue')
 }]
 
 
