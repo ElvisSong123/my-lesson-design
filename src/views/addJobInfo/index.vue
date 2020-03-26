@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-23 11:51:11
- * @LastEditTime: 2020-03-25 16:41:56
+ * @LastEditTime: 2020-03-26 22:50:26
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\addJobInfo\index.vue
@@ -316,126 +316,131 @@
 </script>
 
 <style style="text/less"  lang="less"  scoped>
-  .add-job,
-  .job-detail {
-    height: 70px;
-    border: 1px solid #b5b0b0;
-    border-right: 0px;
-    padding: 0 20px;
-    margin-bottom: 20px;
-    background: #fff;
-
-    .add {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      .avatar {
-        display: flex;
-        align-items: center;
-
-        .pic {
-          width: 5px;
-          height: 30px;
-          background: rgb(0, 179, 138);
-          margin-right: 10px;
-        }
-
-        .title {
-          font-size: 20px;
-          font-weight: bold;
-        }
-      }
-
-      .click {
-        font-size: 14px;
-        color: rgb(0, 179, 138);
-        cursor: pointer
-      }
-    }
-
-
-  }
-
-  .job-detail {
-    height: fit-content;
-
-    .detail {
+  .wrapper {
+    width:100%;
+    height:100%;
+    overflow: auto;
+    .add-job,
+    .job-detail {
       height: 70px;
-      border-bottom: 1px solid #ccc;
-      margin-top: 20px;
+      border: 1px solid #b5b0b0;
+      border-right: 0px;
+      padding: 0 20px;
+      margin-bottom: 20px;
+      background: #fff;
 
-      &:last-of-type {
-        border: none;
-      }
-
-      .head,
-      .foot {
+      .add {
+        width: 100%;
+        height: 100%;
         display: flex;
         justify-content: space-between;
-        color: rgb(0, 179, 138);
+        align-items: center;
 
-        .left {
-          font-size: 16px;
-        }
+        .avatar {
+          display: flex;
+          align-items: center;
 
-        .right {
-          font-size: 16px;
-
-          .operate {
-            display: none;
-          }
-        }
-      }
-
-      .foot {
-        margin-top: 10px;
-
-        .left {
-          span {
-            color: #333;
-            font-size: 14px;
-          }
-
-          span:first-of-type {
-            color: #fd5f39;
+          .pic {
+            width: 5px;
+            height: 30px;
+            background: rgb(0, 179, 138);
             margin-right: 10px;
-            font-size: 16px;
+          }
+
+          .title {
+            font-size: 20px;
+            font-weight: bold;
           }
         }
 
-        .right {
-          color: #333;
-          font-size: 12px;
+        .click {
+          font-size: 14px;
+          color: rgb(0, 179, 138);
+          cursor: pointer
         }
       }
+
+
     }
 
-    .detail.is-hover {
-      .head {
-        .right {
-          .company-name {
-            display: none;
+    .job-detail {
+      height: fit-content;
+
+      .detail {
+        height: 70px;
+        border-bottom: 1px solid #ccc;
+        margin-top: 20px;
+
+        &:last-of-type {
+          border: none;
+        }
+
+        .head,
+        .foot {
+          display: flex;
+          justify-content: space-between;
+          color: rgb(0, 179, 138);
+
+          .left {
+            font-size: 16px;
           }
 
-          .operate {
-            display: inline-block;
-            font-size: 12px;
+          .right {
+            font-size: 16px;
 
-            i {
-              font-size: 12px;
+            .operate {
+              display: none;
             }
+          }
+        }
 
+        .foot {
+          margin-top: 10px;
+
+          .left {
             span {
-              margin: 0 5px;
-              cursor: pointer
+              color: #333;
+              font-size: 14px;
             }
+
+            span:first-of-type {
+              color: #fd5f39;
+              margin-right: 10px;
+              font-size: 16px;
+            }
+          }
+
+          .right {
+            color: #333;
+            font-size: 12px;
           }
         }
       }
 
+      .detail.is-hover {
+        .head {
+          .right {
+            .company-name {
+              display: none;
+            }
+
+            .operate {
+              display: inline-block;
+              font-size: 12px;
+
+              i {
+                font-size: 12px;
+              }
+
+              span {
+                margin: 0 5px;
+                cursor: pointer
+              }
+            }
+          }
+        }
+
+      }
     }
   }
 </style>

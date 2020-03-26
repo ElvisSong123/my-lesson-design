@@ -3,14 +3,17 @@
     <!--条件筛选-->
     <div class="search-screen">
       <el-form :inline="true" :model="jobSearch" class="demo-form-inline">
+        <el-form-item label="公司名称">
+          <el-input v-model="jobSearch.name" placeholder="输入公司"></el-input>
+        </el-form-item>
         <el-form-item label="公司地点">
-          <el-input v-model="jobSearch.place" placeholder="输入公司/地点"></el-input>
+          <el-input v-model="jobSearch.place" placeholder="输入地点"></el-input>
         </el-form-item>
         <el-form-item label="职位搜索">
           <el-input v-model="jobSearch.job" placeholder="输入职位"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">查询</el-button>
+          <el-button type="primary" @click="searchBtn">查询</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -40,7 +43,9 @@
       </el-table>
       <!-- 分页插件 -->
       <div class="block">
-        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 20]" :page-size="5" layout="total, sizes, prev, pager, next, jumper" :total="allJobDataCount">
+        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" 
+        :current-page="currentPage" :page-sizes="[5, 10, 20]" :page-size="5" 
+        layout="total, sizes, prev, pager, next, jumper" :total="allJobDataCount">
         </el-pagination>
       </div>
     </div>
@@ -145,7 +150,7 @@
       return {
         nowPage: 1,
         pageCount: 5,
-        companyAvatar:'',
+        companyAvatar: '',
         allJobDataCount: 0,
         jobDetailData: {},
         drawerJobVisible: false,
@@ -156,7 +161,7 @@
         currentPage: 1,
         jobSearch: {
           place: '',
-          financ: '',
+          name: '',
           job: ''
         },
         imgUrlArr: [],
@@ -166,24 +171,68 @@
     computed: {},
     watch: {},
     created() {
-      this.getJobData();
+      this.searchJobInfoByPage();
       this.getJobCount();
     },
     mounted() {},
     beforeDestroy() {},
     methods: {
+      judgeNull(obj) { //判断一个对象是否有值
+        for (const ele in obj) {
+          if (obj[ele]) {
+            return true
+          }
+        }
+        return false;
+      },
+
+      searchBtn(){
+        this.nowPage = 1;
+        this.searchJobInfoByPage();
+        this.getJobCount();
+      },
+
+      searchJobInfoByPage() {
+        this.$ajax({
+          method: 'post',
+          url: 'searchJobInfo',
+          data: {
+            ...this.jobSearch,
+            nowPage:this.nowPage,
+            pageCount:this.pageCount
+          }
+        }).then((res) => {
+          if (res) {
+            // this.imgUrlArr = res.filter(ele => !ele.includes('avatar-'));
+            // this.companyAvatar = res.filter(ele => ele.includes('avatar-'))
+            console.log(res);
+            if (res.data) {
+              res = res.data.map((ele, index) => {
+                let job_detail = JSON.parse(ele.job_detail);
+                return { ...ele, ...job_detail }
+              });
+            }
+            this.tableData = res;
+          }
+        }, (err) => {
+          this.$message.error('服务器开小差');
+        })
+
+
+      },
+
       async getJobCount() {
-        let allJobDataCount = await this.getData('getJobDataCount');
+        let allJobDataCount = await this.getData('getJobDataCount',this.jobSearch);
         this.allJobDataCount = allJobDataCount.data[0]['count(1)']
       },
       handleSizeChange(e) {
         this.pageCount = e;
         this.nowPage = 1;
-        this.getJobData();
+        this.searchJobInfoByPage();
       },
       handleCurrentChange(e) {
         this.nowPage = e;
-        this.getJobData();
+        this.searchJobInfoByPage();
       },
       /**
        * @description: 打开公司详情弹窗
@@ -216,8 +265,8 @@
           url: `getCompanyImg?userid=${corpId}`,
         }).then((res) => {
           if (res) {
-            this.imgUrlArr = res.filter(ele=>!ele.includes('avatar-'));
-            this.companyAvatar = res.filter(ele=>ele.includes('avatar-'))
+            this.imgUrlArr = res.filter(ele => !ele.includes('avatar-'));
+            this.companyAvatar = res.filter(ele => ele.includes('avatar-'))
           }
         }, (err) => {
           this.$message.error('服务器开小差');
@@ -228,21 +277,7 @@
         this.companyIntroduce = JSON.parse(res.data[0].company_infos);
         this.companyDevelop = JSON.parse(res.data[0].company_develop).data;
       },
-      /**
-       * @description: 获取职位信息
-       * @param {type} 
-       * @return: 
-       */
-      async getJobData() {
-        let res = await this.getData('getJobInfoByPage', { nowPage: this.nowPage, pageCount: this.pageCount });
-        if (res.data) {
-          res = res.data.map((ele, index) => {
-            let job_detail = JSON.parse(ele.job_detail);
-            return { ...ele, ...job_detail }
-          });
-        }
-        this.tableData = res;
-      },
+
       getData(url, data = {}, userid) {
         return this.$ajax({
           method: 'post',
@@ -260,8 +295,9 @@
 
 <style style="text/less"  lang="less">
   .job-wrapper {
-    height:100%;
+    height: 100%;
     overflow: auto;
+
     .search-screen {
       margin-bottom: 20px;
 
@@ -326,7 +362,8 @@
             }
 
             .right {
-              margin-left:20px;
+              margin-left: 20px;
+
               .name {
                 font-size: 30px;
                 margin-bottom: 10px;
@@ -433,7 +470,7 @@
           .el-carousel.el-carousel--horizontal {
 
             margin: 0 auto;
-            width:70%;
+            width: 70%;
             height: 90%;
             overflow: hidden;
 
