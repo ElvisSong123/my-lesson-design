@@ -4,19 +4,7 @@
     <div class="search-screen">
       <el-form :inline="true" :model="jobSearch" class="demo-form-inline">
         <el-form-item label="公司地点">
-          <el-input v-model="jobSearch.place" placeholder="输入公司地点"></el-input>
-        </el-form-item>
-        <el-form-item label="融资阶段">
-          <el-select v-model="jobSearch.financ" placeholder="选择融资阶段" clearable>
-            <el-option label="未融资" value="noFinanc"></el-option>
-            <el-option label="天使轮" value="firstFinanc"></el-option>
-            <el-option label="A轮" value="A-Financ"></el-option>
-            <el-option label="B轮" value="B-Financ"></el-option>
-            <el-option label="C轮" value="C-Financ"></el-option>
-            <el-option label="D轮" value="D-Financ"></el-option>
-            <el-option label="上市公司" value="publicCompony"></el-option>
-            <el-option label="不需要融资" value="noNeedFinanc"></el-option>
-          </el-select>
+          <el-input v-model="jobSearch.place" placeholder="输入公司/地点"></el-input>
         </el-form-item>
         <el-form-item label="职位搜索">
           <el-input v-model="jobSearch.job" placeholder="输入职位"></el-input>
@@ -63,7 +51,7 @@
       <div class="content">
         <div class="company-logo">
           <div class="background">
-            <img src="https://www.lgstatic.com/thumbnail_300x300/i/image/M00/72/A0/CgpFT1o8uG6AV6iJAABIpIC8ytU647.png" alt="">
+            <img :src=companyAvatar alt="">
             <div class="right">
               <div class="name">{{companyIntroduce.name}}</div>
               <div class="signWord">{{companyIntroduce.slogan}}</div>
@@ -157,6 +145,7 @@
       return {
         nowPage: 1,
         pageCount: 5,
+        companyAvatar:'',
         allJobDataCount: 0,
         jobDetailData: {},
         drawerJobVisible: false,
@@ -202,6 +191,7 @@
        * @return: 
        */
       openCompanyDetail(corpId) {
+
         this.drawerCompanyVisible = true;
         this.getCompanyImg(corpId);
         this.getCompanyInfo(corpId);
@@ -226,7 +216,8 @@
           url: `getCompanyImg?userid=${corpId}`,
         }).then((res) => {
           if (res) {
-            this.imgUrlArr = res;
+            this.imgUrlArr = res.filter(ele=>!ele.includes('avatar-'));
+            this.companyAvatar = res.filter(ele=>ele.includes('avatar-'))
           }
         }, (err) => {
           this.$message.error('服务器开小差');
@@ -335,6 +326,7 @@
             }
 
             .right {
+              margin-left:20px;
               .name {
                 font-size: 30px;
                 margin-bottom: 10px;
@@ -441,7 +433,7 @@
           .el-carousel.el-carousel--horizontal {
 
             margin: 0 auto;
-            width: 80%;
+            width:70%;
             height: 90%;
             overflow: hidden;
 

@@ -2,16 +2,19 @@
   <div class="left-menu">
     <ul>
       <li class="item-menu" v-for="(item,index) in allMenu" :key="index" @click="onMenuClick($event,item)">
-        <i :class="['iconfont-ats',item.src,{'active':item.isItemClick}]"></i>
-        <span :class="[{'active':item.isItemClick}]">{{item.title}}</span>
-        <i style="margin-left:20px" class="iconfont-ats icon-xiala2" v-if="item.children.length&&!item.showChild"></i>
-        <i style="margin-left:20px" class="iconfont-ats icon-shangla" v-if="item.children.length&&item.showChild"></i>
+        <template v-if="item.whoCanSee == currentStatus">
+          <i :class="['iconfont-ats',item.src,{'active':item.isItemClick}]"></i>
+          <span :class="[{'active':item.isItemClick}]">{{item.title}}</span>
+          <i style="margin-left:20px" class="iconfont-ats icon-xiala2" v-if="item.children.length&&!item.showChild"></i>
+          <i style="margin-left:20px" class="iconfont-ats icon-shangla" v-if="item.children.length&&item.showChild"></i>
 
-        <ul class="ul-children" v-if="item.children.length&&item.showChild">
-          <li class="item-menu children" v-for="(ele,index) in item.children" :key="index" @click="onMenuClick($event,ele)">
-            <span :class="[{'active':ele.isItemClick}]">{{ele.title}}</span>
-          </li>
-        </ul>
+          <ul class="ul-children" v-if="item.children.length&&item.showChild">
+            <li class="item-menu children" v-for="(ele,index) in item.children" :key="index" @click="onMenuClick($event,ele)">
+              <span :class="[{'active':ele.isItemClick}]">{{ele.title}}</span>
+            </li>
+          </ul>
+        </template>
+
       </li>
     </ul>
   </div>
@@ -24,7 +27,7 @@
     props: {},
     data() {
       return {
-
+        currentStatus: '',
         allMenu: [
         {
           path: '/myResume',
@@ -34,6 +37,7 @@
           isItemClick: false,
           showChild: true,
           parentTitle: null,
+          whoCanSee: '学生',
           children: [
           {
             path: '/myResume/addResume',
@@ -44,7 +48,7 @@
             isItemClick: false,
             children: []
           },
-           {
+          {
             path: '/myResume/viewResume',
             name: 'viewResume',
             title: '预览简历',
@@ -63,7 +67,8 @@
           src: 'icon-zhiweiguanli',
           isItemClick: false,
           showChild: false,
-          children: []
+          children: [],
+          whoCanSee: '学生',
         },
         {
           path: '/recruitStatistic',
@@ -71,7 +76,8 @@
           title: '招聘统计',
           src: 'icon-tongji',
           isItemClick: false,
-          children: []
+          children: [],
+          whoCanSee: '学生',
         },
         {
           path: '/deliveryFeedback',
@@ -79,22 +85,41 @@
           title: '投递反馈',
           src: 'icon-tuijianfankui',
           isItemClick: false,
-          children: []
+          children: [],
+          whoCanSee: '学生'
         },
-         {
+        {
           path: '/addCompanyInfo',
           name: 'addCompanyInfo',
           title: '公司简介',
           src: 'icon-qiyeshezhi',
           isItemClick: false,
-          children: []
+          children: [],
+          whoCanSee: '企业用户'
         }, {
           path: '/addJobInfo',
           name: 'addJobInfo',
           title: '新增职位',
           src: 'icon-mianshizhiwei',
           isItemClick: false,
-          children: []
+          children: [],
+          whoCanSee: '企业用户'
+        },{
+          path: '/useInfo',
+          name: 'userInfo',
+          title: '用户信息',
+          src: 'icon-lijimianshi',
+          isItemClick: false,
+          children: [],
+          whoCanSee: '管理员'
+        },{
+          path: '/userApply',
+          name: 'userApply',
+          title: '账号申请',
+          src: 'icon-yaoqingshijian',
+          isItemClick: false,
+          children: [],
+          whoCanSee: '管理员'
         },]
       }
     },
@@ -103,12 +128,14 @@
     created() {
       const routeName = this.$router.currentRoute.name;
       this.initMenuStyle(this.allMenu, routeName);
+      this.currentStatus = this.$cookie.getCookie('status');
+      console.log(this.currentStatus)
     },
     watch: {
-      $route(to, from) {//监听路由变化,主要是在点击浏览器返回或前进按钮时更新左侧菜单样式
+      $route(to, from) { //监听路由变化,主要是在点击浏览器返回或前进按钮时更新左侧菜单样式
         let routeName = to.path.split('/');
         routeName = routeName[routeName.length - 1];
-        this.initMenuStyle(this.allMenu,routeName);
+        this.initMenuStyle(this.allMenu, routeName);
       }
     },
     mounted() {},

@@ -1,6 +1,5 @@
 <template>
   <div class="wrapper-login">
-
     <div class="content-login">
       <div class="avatar">
         <i v-if="!imgURL" class="iconfont-ats icon-lijimianshi"></i>
@@ -91,7 +90,6 @@
         axios.get(`http://localhost:12306/getAvatar?username=${this.ruleForm.username}`, { responseType: 'arraybuffer' })
           .then((res) => {
             this.imgURL = `data: image/jpeg;base64,${btoa(new Uint8Array(res.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))}`;
-
           }, (err) => {
             this.imgURL = ''
           });
@@ -115,10 +113,18 @@
                 status:this.ruleForm.status
               }
             }).then((res) => {
-              this.$cookie.setCookie('sessionId', res.cookie, 1); 
-              this.$cookie.setCookie('username', res.username, 1);
-              this.$cookie.setCookie('status', res.status, 1);
-              this.$cookie.setCookie('userid', res.userid, 1);
+              // let username = this.ruleForm.username;
+              // this.$cookie.setCookie(`${username}-sessionId`, res.cookie, 1); 
+              // this.$cookie.setCookie(`${username}-username`, res.username, 1);
+              // this.$cookie.setCookie(`${username}-status`, res.status, 1);
+              // this.$cookie.setCookie(`${username}-userid`, res.userid, 1);
+
+              this.$cookie.setCookie(`sessionId`, res.cookie, 1); 
+              this.$cookie.setCookie(`username`, res.username, 1);
+              this.$cookie.setCookie(`status`, res.status, 1);
+              this.$cookie.setCookie(`userid`, res.userid, 1);
+              // this.$store.commit('addCurrentUser',username);
+              // console.log(this.$store.state.currentUser)
               window.sessionStorage.setItem('avatar', this.imgURL)
               this.handleInfo(res);
               this.isRequestLogin = false;

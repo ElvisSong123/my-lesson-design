@@ -3,7 +3,12 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home/index.vue'
 import axios from '@/toolsFunc/axios.js'
 Vue.use(VueRouter)
-
+// let sessionId = document.cookie.split(';');
+//     sessionId = sessionId.filter((ele) => {
+//       return ele.includes('status');
+//     })
+// sessionId = sessionId[0] && sessionId[0].split('=')[1].trim()
+// console.log(sessionId,'status')
 const routes = [{
   path: '/',
   name: 'home',

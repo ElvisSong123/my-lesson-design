@@ -16,7 +16,11 @@
           <div class="name">
             <div class="logo">
               <div class="left">
-                <img :src=companyAvatar alt="">
+                <div class="avatar">
+                  <span v-if="!companyAvatar.length" @click="uploadImg('file1')">+</span>
+                  <img v-else :src=companyAvatar alt="" @click="uploadImg('file1')">
+                  <input type="file" id="file" ref="file1" style="display:none" @change="fileBtn('file1')">
+                </div>
               </div>
               <div class="right">
                 <p>{{cloneCompanyIntroduce.name}}</p>
@@ -96,8 +100,8 @@
             <div class="title">公司文化</div>
           </div>
           <div class="click">
-            <input type="file" id="file" ref="file" style="display:none" @change="fileBtn(this)">
-            <span @click="uploadImg">
+            <input type="file" id="file" ref="file2" style="display:none" @change="fileBtn('file2')">
+            <span @click="uploadImg('file2')">
               <i class="iconfont-ats icon-jiahao1"></i>上传图片 {{imgURL.length}} / 8
             </span>
 
@@ -214,6 +218,7 @@
         imgURL: [],
         imgFile: [],
         imgUrlArr: [],
+        isUploadAvatar: false,
         developDeleteDialogVisible: false,
         companyDevelopVisible: false,
         isRequestLoading: false,
@@ -259,7 +264,6 @@
     computed: {},
     watch: {},
     created() {
-      this.companyAvatar = window.sessionStorage.getItem('avatar')
       this.getCompanyInfo();
       this.getCompanyImg();
     },
@@ -273,11 +277,13 @@
           url: `getCompanyImg?userid=${this.$cookie.getCookie('userid')}`,
         }).then((res) => {
           if (res) {
-            this.imgUrlArr = res;
+            console.log(res,'songbiao')
+            this.imgUrlArr = res.filter(ele=>!ele.includes('avatar-'));
+            this.companyAvatar = res.filter(ele=>ele.includes('avatar-'));
+            console.log(this.companyAvatar)
           }
         }, (err) => {
           this.$message.error('服务器开小差');
-
         })
       },
       /**
@@ -285,7 +291,7 @@
        * @param {type} 
        * @return: 
        */
-      submitImg() {
+      submitImg() {//上传企业文化图片请求函数
         const formData = new FormData(); //使用formdata上传文件
         if (this.imgFile.length) {
           this.imgFile.forEach((ele, index) => {
@@ -303,17 +309,37 @@
             this.$showMessage(res.message, 'success');
             setTimeout(() => {
               this.getCompanyImg();
-
             }, 1000);
           }
         }, (err) => {
           this.$message.error('服务器开小差');
 
         })
-
-
-
       },
+
+      /**
+       * @description: 上传企业头像请求函数
+       * @param {type} 
+       * @return: 
+       */
+      sendAvatarImg(avatar) {
+        if (avatar) {
+          const formData = new FormData(); //使用formdata上传文件
+          formData.append("imgfile", avatar, avatar.name);
+          this.$ajax({
+            method: 'post',
+            url: `sendCompanyImg?username=${this.$cookie.getCookie('userid')}&avatar=avatar`,
+            data: formData
+          }).then((res) => {
+            if (res) {
+               console.log('上传成功')
+            }
+          }, (err) => {
+            console.log('上传失败')
+          })
+        }
+      },
+
       onDelImg(index) {
         this.imgURL.splice(index, 1);
         this.imgFile.splice(index, 1);
@@ -323,15 +349,21 @@
        * @param {type} 
        * @return: 
        */
-      fileBtn(e) {
-        let inputFile = this.$refs.file;
+      fileBtn(fileRef) {
+        let inputFile = this.$refs[fileRef];
         let fileObj = inputFile.files[0];
         const windowURL = window.URL || window.webkitURL; //使用该方法生成二进制格式的图片
         if (fileObj) {
           const imgURL = windowURL.createObjectURL(fileObj);
           if (this.imgURL.length < 8) {
-            this.imgURL.push(imgURL);
-            this.imgFile.push(fileObj)
+            if (!this.isUploadAvatar) { //不是上传头像的情况下
+              this.imgURL.push(imgURL);
+              this.imgFile.push(fileObj)
+            } else {
+              this.companyAvatar = imgURL;
+              this.isUploadAvatar = false;
+              this.sendAvatarImg(fileObj);
+            }
           } else {
             this.$showMessage('最多上传8张图片', 'warning')
           }
@@ -341,12 +373,15 @@
         }
       },
       /**
-       * @description: 上传图片
+       * @description: 打开选择图片文件弹窗
        * @param {type} 
        * @return: 
        */
-      uploadImg() {
-        this.$refs.file.click();
+      uploadImg(fileRef) {
+        if (fileRef == 'file1') {
+          this.isUploadAvatar = true; //上传企业头像
+        }
+        this.$refs[fileRef].click();
       },
       /**
        * @description:打开删除弹窗
@@ -539,12 +574,37 @@
             align-items: center;
 
             .left {
-              img {
-                width: 100px;
-                height: 100px;
-                vertical-align: middle;
-                border-radius: 50%;
-                margin-right: 20px;
+              margin-right: 20px;
+
+              .avatar {
+                width: 108px;
+                height: 108px;
+                text-align: center;
+
+                span,
+                img {
+                  margin-right: 20px;
+                  display: inline-block;
+                  margin-bottom: 8px;
+                  font-size: 50px;
+                  width: 100px;
+                  height: 100px;
+                  cursor: pointer;
+                  line-height: 100px;
+                  border: 3px solid #fff;
+                  box-shadow: 0 0 3px 1px #3498ff;
+                  border-radius: 50%;
+                  color: #3498ff;
+                }
+
+                p {
+                  width: 100%;
+                  font-size: 12px;
+                  text-align: center;
+                  color: #fff;
+                  margin-left: 40px;
+
+                }
               }
             }
 
