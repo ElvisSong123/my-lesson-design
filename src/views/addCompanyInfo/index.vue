@@ -447,9 +447,9 @@
        */
       async getCompanyInfo() {
         let res = await this.getData('getCompanyInfo');
-        this.cloneCompanyIntroduce = JSON.parse(res.data[0].company_infos);
+        this.cloneCompanyIntroduce = res.data && JSON.parse(res.data[0].company_infos);
         this.$store.commit('addCompanyInfo', this.cloneCompanyIntroduce); //公司信息存入vuex,用于共享。
-        this.cloneCompanyDevelop = JSON.parse(res.data[0].company_develop).data;
+        this.cloneCompanyDevelop = res.data && JSON.parse(res.data[0].company_develop).data;
       },
       addCompanyInfo() {
         this.companyIntroduceVisible = true;

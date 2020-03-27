@@ -6,7 +6,7 @@
         <el-form-item label="公司名称">
           <el-input v-model="jobSearch.name" placeholder="输入公司"></el-input>
         </el-form-item>
-        <el-form-item label="公司地点">
+        <el-form-item label="工作地点">
           <el-input v-model="jobSearch.place" placeholder="输入地点"></el-input>
         </el-form-item>
         <el-form-item label="职位搜索">
@@ -38,14 +38,15 @@
           </div>
         </el-table-column>
         <el-table-column label="操作" width="180" align="center">
-          <el-button type="success">投递</el-button>
+          <template slot-scope="{row}">
+            <el-button type="success" v-if="!aleadyDeliver.includes(row.job_id)" @click="openDeliverJobVisible(row)">投递</el-button>
+            <el-button type="info" disabled v-else>已投递</el-button>
+          </template>
         </el-table-column>
       </el-table>
       <!-- 分页插件 -->
       <div class="block">
-        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" 
-        :current-page="currentPage" :page-sizes="[5, 10, 20]" :page-size="5" 
-        layout="total, sizes, prev, pager, next, jumper" :total="allJobDataCount">
+        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 20]" :page-size="5" layout="total, sizes, prev, pager, next, jumper" :total="allJobDataCount">
         </el-pagination>
       </div>
     </div>
@@ -117,7 +118,7 @@
 
       </div>
     </el-drawer>
-
+  
     <el-drawer class="job-drawer" :visible.sync="drawerJobVisible" :direction="direction" size="100%">
       <div slot="title" style="font-size:20px">职位详情</div>
       <div class="content">
@@ -137,6 +138,14 @@
         </div>
       </div>
     </el-drawer>
+
+     <el-dialog title="投递职位" :visible.sync="deliverJobVisible" width="30%" center>
+      <span>一旦投递，简历无法撤回。确认投递该职位?</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="deliverJobVisible = false">取 消</el-button>
+        <el-button type="primary" @click="onDeliver">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 
 </template>
@@ -148,6 +157,9 @@
     props: {},
     data() {
       return {
+        deliverJobVisible:false,
+        aleadyDeliver:[],
+        currentJobInfo:'',
         nowPage: 1,
         pageCount: 5,
         companyAvatar: '',
@@ -173,10 +185,63 @@
     created() {
       this.searchJobInfoByPage();
       this.getJobCount();
+      this.getDeliverResume();
     },
     mounted() {},
     beforeDestroy() {},
     methods: {
+      /**
+       * @description: 获取已经投递的数据
+       * @param {type} 
+       * @return: 
+       */
+      getDeliverResume(){
+        this.aleadyDeliver = [];
+        this.$ajax({
+            method: 'post',
+            url:'getDeliverResume',
+            data:{
+              userid:this.$cookie.getCookie('userid')
+            }
+          }).then((res)=>{
+            if(res.statusCode == 200){
+               res.data.forEach(ele => {
+                 this.aleadyDeliver.push(ele.job_id);
+               });
+            }
+          })
+      },
+
+      openDeliverJobVisible(data){
+        this.deliverJobVisible = true;
+        this.currentJobInfo = data
+      },
+      /**
+       * @description: 投递职位
+       * @param {type} 
+       * @return: 
+       */
+      async onDeliver(data) {
+        this.deliverJobVisible = false;
+        let res = await this.getData('getResumeData', {}, this.$cookie.getCookie('userid'));
+        if (res.statusCode == 200) {
+          const { userid, ...resumeData } = res.data;
+          const { corp_id, job_id, job_address, job_name } = this.currentJobInfo;
+          let sendData = { corp_id, job_id, job_address, job_name, userid, resumeData }; 
+          this.$ajax({
+            method: 'post',
+            url:'addDeliverResume',
+            data:sendData
+          }).then((res)=>{2
+            if(res.statusCode == 200){
+              this.$showMessage('投递成功','success');
+              this.getDeliverResume();
+            }
+          })
+        }
+
+      },
+
       judgeNull(obj) { //判断一个对象是否有值
         for (const ele in obj) {
           if (obj[ele]) {
@@ -186,7 +251,7 @@
         return false;
       },
 
-      searchBtn(){
+      searchBtn() {
         this.nowPage = 1;
         this.searchJobInfoByPage();
         this.getJobCount();
@@ -198,14 +263,11 @@
           url: 'searchJobInfo',
           data: {
             ...this.jobSearch,
-            nowPage:this.nowPage,
-            pageCount:this.pageCount
+            nowPage: this.nowPage,
+            pageCount: this.pageCount
           }
         }).then((res) => {
           if (res) {
-            // this.imgUrlArr = res.filter(ele => !ele.includes('avatar-'));
-            // this.companyAvatar = res.filter(ele => ele.includes('avatar-'))
-            console.log(res);
             if (res.data) {
               res = res.data.map((ele, index) => {
                 let job_detail = JSON.parse(ele.job_detail);
@@ -222,7 +284,7 @@
       },
 
       async getJobCount() {
-        let allJobDataCount = await this.getData('getJobDataCount',this.jobSearch);
+        let allJobDataCount = await this.getData('getJobDataCount', this.jobSearch);
         this.allJobDataCount = allJobDataCount.data[0]['count(1)']
       },
       handleSizeChange(e) {
@@ -252,11 +314,9 @@
        */
       openJobDetail(jobId) {
         this.drawerJobVisible = true;
-        console.log(jobId);
         this.jobDetailData = this.tableData.filter((ele) => {
           return ele.job_id == jobId
         })[0]
-        console.log(this.jobDetailData, '1234')
       },
       getCompanyImg(corpId) {
         this.imgUrlArr = [];
@@ -278,7 +338,7 @@
         this.companyDevelop = JSON.parse(res.data[0].company_develop).data;
       },
 
-      getData(url, data = {}, userid) {
+      getData(url, data, userid = '') {
         return this.$ajax({
           method: 'post',
           url,

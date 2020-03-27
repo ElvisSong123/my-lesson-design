@@ -150,7 +150,7 @@
           method: 'post',
           url: 'getResumeData',
           data: {
-            operator: this.$cookie.getCookie('username')
+            userid: this.$cookie.getCookie('userid')
           }
         }).then((res) => {
           if (res.statusCode == 200) {

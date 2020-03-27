@@ -77,8 +77,6 @@
     computed: {},
     watch: {},
     created() {
-      console.log(this.$router)
-
       if (this.$route.query.username) {
         this.ruleForm.username = this.$route.query.username
       }

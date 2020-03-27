@@ -11,7 +11,7 @@ sessionId = sessionId[0] && sessionId[0].split('=')[1].trim()
 let direct = '';
 console.log(sessionId,'status123')
 if(sessionId == '管理员'){
-  direct = '/useInfo'
+  direct = '/userInfo'
 }else if(sessionId == '学生'){
   direct = '/myResume/viewResume'
 }else if(sessionId == '企业用户'){

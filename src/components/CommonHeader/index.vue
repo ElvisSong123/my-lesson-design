@@ -44,7 +44,8 @@
     watch: {},
     created() {
       this.status = this.$cookie.getCookie('status');
-      this.username = this.$cookie.getCookie('username');
+      this.userid = this.$cookie.getCookie('userid');
+      this.username = this.$cookie.getCookie('username')
       this.getAvatar()
       
     },
@@ -52,7 +53,7 @@
     beforeDestroy() {},
     methods: {
       getAvatar() {
-        axios.get(`http://localhost:12306/getAvatar?username=${this.username}`, { responseType: 'arraybuffer' })
+        axios.get(`http://localhost:12306/getAvatar?username=${this.userid}`, { responseType: 'arraybuffer' })
           .then((res) => {
             this.imgURL = `data: image/jpeg;base64,${btoa(new Uint8Array(res.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))}`;
             window.sessionStorage.setItem('avatar', this.imgURL);
@@ -107,8 +108,8 @@
         })
       },
       updatePassword() {
-        const username = this.$cookie.getCookie('username')
-        this.$router.push({ path: '/register', query: { username: username } })
+        const userid = this.$cookie.getCookie('userid')
+        this.$router.push({ path: '/register', query: { username: userid } })
       }
     },
   }

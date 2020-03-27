@@ -422,7 +422,7 @@
           method: 'post',
           url: 'getResumeData',
           data: {
-            operator: this.$cookie.getCookie('username')
+            userid: this.$cookie.getCookie('userid')
           }
         }).then((res) => {
           if (res.statusCode == 200) {
@@ -521,7 +521,8 @@
           url: this.isPersonResumeEdit ? 'editPersonData' : 'addPersonData', //判断是编辑数据还是新增数据
           data: {
             ...data,
-            operator: this.$cookie.getCookie('username')
+            operator: this.$cookie.getCookie('username'),
+            user_id:this.$cookie.getCookie('userid')
           }
         }).then((res) => {
           if (res.statusCode == 200) {
