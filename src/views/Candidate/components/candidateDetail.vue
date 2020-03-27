@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-27 14:49:19
- * @LastEditTime: 2020-03-27 15:57:41
+ * @LastEditTime: 2020-03-27 16:47:24
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\Candidate\components\candidateDetail.vue
@@ -11,7 +11,7 @@
     <div class="my-resume">
       <div class="person-info" v-if="clonePerson">
         <div class="avatar">
-          <img :src=imgURL alt="">
+          <img :src=imgAvatar alt="">
           <div class="getInfo">
             <div class="name">
               <span>{{clonePerson.name}}</span>
@@ -125,7 +125,7 @@
   export default {
     name: "",
     components: {},
-    props: ['resumeData'],
+    props: ['resumeData','userid'],
     data() {
       return {
         imgURL: '',
@@ -136,12 +136,14 @@
         cloneProject: [],
         cloneMajor: null,
         cloneEvaluate: null,
+        imgAvatar:''
       }
     },
     computed: {},
     watch: {},
     created() {
-       this.initResumedata(this.resumeData)
+       this.initResumedata(this.resumeData);
+       this.getAvatar(this.userid)
     },
     mounted() {},
     beforeDestroy() {},
@@ -158,6 +160,21 @@
           this.cloneProject.length || this.cloneMajor || this.cloneEvaluate) {
           this.haveResume = true
         }
+      },
+      getAvatar(userid){
+          this.$ajax({
+          method: 'post',
+          url: 'getUserAvatar',
+          data: {
+            userid
+          }
+        }).then((res) => {
+          if (res) {
+            this.imgAvatar = res
+          }
+        }, (err) => {
+          this.$message.error('服务器开小差');
+        })
       }
     },
   }

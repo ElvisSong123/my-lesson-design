@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-26 15:29:17
- * @LastEditTime: 2020-03-27 16:13:45
+ * @LastEditTime: 2020-03-27 16:27:36
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\Candidate\index.vue
@@ -27,7 +27,7 @@
       <el-table class="job-table" :data="tableData" stripe style="width: 100%">
 
         <el-table-column label="候选人" width="180" align="center">
-          <div class="company-name" slot-scope="{ row }" style="cursor:pointer" @click="openCandidateDetail(row.resume_data)">
+          <div class="company-name" slot-scope="{ row }" style="cursor:pointer" @click="openCandidateDetail(row.resume_data,row.user_id)">
             {{row.resume_data.operator}}
           </div>
         </el-table-column>
@@ -52,7 +52,7 @@
 
     <!-- 抽屉弹框 -->
     <el-drawer :visible.sync="drawerCandidateVisible" :direction="direction" size="100%">
-      <Candidate-deteil :resumeData="resumedetail"></Candidate-deteil>
+      <Candidate-deteil :resumeData="resumedetail" :userid="userid"></Candidate-deteil>
     </el-drawer>
 
   </div>
@@ -79,7 +79,8 @@
         pageCount:5,
         currentPage: 1,
         allJobDataCount: 0,
-        resumedetail:''
+        resumedetail:'',
+        userid:''
       }
     },
     computed: {},
@@ -92,9 +93,10 @@
     beforeDestroy() {},
     methods: {
       searchBtn() {},
-      openCandidateDetail(data) {
+      openCandidateDetail(data,userid) {
           this.drawerCandidateVisible = true;
           this.resumedetail = data;
+          this.userid = userid
       },
       searchCandidateInfoByPage() {
         this.$ajax({
