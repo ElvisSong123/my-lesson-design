@@ -9,8 +9,7 @@ let sessionId = document.cookie.split(';');
   })
 sessionId = sessionId[0] && sessionId[0].split('=')[1].trim()
 let direct = '';
-console.log(sessionId,'status123')
-if(sessionId == '管理员'){
+if(sessionId == '管理员'){//根据不同的身份进行不同的路由重定向
   direct = '/userInfo'
 }else if(sessionId == '学生'){
   direct = '/myResume/viewResume'
@@ -81,7 +80,12 @@ const routes = [{
       name: 'addJobInfo',
       component: () => import('@/views/addJobInfo/index.vue'),
       beforeEnter:routeProtect(sessionId,'企业用户'),
-    }, {
+    },{
+      path: 'candidate',
+      name: 'candidate',
+      component: () => import('@/views/Candidate/index.vue'),
+      beforeEnter:routeProtect(sessionId,'企业用户'),
+    },{
       path: 'userInfo',
       name: 'userInfo',
       component: () => import('@/views/userInfo/index.vue'),
