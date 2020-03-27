@@ -227,7 +227,7 @@
         if (res.statusCode == 200) {
           const { userid, ...resumeData } = res.data;
           const { corp_id, job_id, job_address, job_name } = this.currentJobInfo;
-          let sendData = { corp_id, job_id, job_address, job_name, userid, resumeData }; 
+          let sendData = { corp_id, job_id, job_address, job_name, userid, resumeData,deliverState:'简历筛选' }; 
           this.$ajax({
             method: 'post',
             url:'addDeliverResume',
@@ -257,6 +257,11 @@
         this.getJobCount();
       },
 
+      /**
+       * @description: 按搜索条件和页码搜索数据
+       * @param {type} 
+       * @return: 
+       */
       searchJobInfoByPage() {
         this.$ajax({
           method: 'post',

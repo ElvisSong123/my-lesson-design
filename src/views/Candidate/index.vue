@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-26 15:29:17
- * @LastEditTime: 2020-03-27 16:27:36
+ * @LastEditTime: 2020-03-27 20:06:57
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\Candidate\index.vue
@@ -31,15 +31,15 @@
             {{row.resume_data.operator}}
           </div>
         </el-table-column>
-        <el-table-column prop="deliver_address" label="工作地点" align="center">
+        <el-table-column prop="deliver_address" label="投递职位地点" align="center">
         </el-table-column>
         <el-table-column prop="deliver_jobname" label="投递职位" align="center">
         </el-table-column>
-        <el-table-column prop="deliver_jobname" label="当前状态" align="center">
+        <el-table-column prop="deliver_state" label="当前状态" align="center">
         </el-table-column>
         <el-table-column label="操作" width="180" align="center">
           <template slot-scope="{row}">
-            <el-button type="success">移动到</el-button>
+            <el-button type="success" @click="moveCandidateTo(row.job_id,row.user_id)">移动到</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -55,6 +55,16 @@
       <Candidate-deteil :resumeData="resumedetail" :userid="userid"></Candidate-deteil>
     </el-drawer>
 
+    <el-dialog title="移动候选人" :visible.sync="moveCndidateVisible" width="30%" center>
+      <span slot="footer" class="dialog-footer">
+        <el-select style="display:block;margin-bottom:20px" v-model="moveValue">
+          <el-option v-for="item in options" :key="item.value" :label="item.value" :value="item.value">
+          </el-option>
+        </el-select>
+        <el-button @click="moveCndidateVisible = false">取 消</el-button>
+        <el-button type="primary" @click="onMoveCandidate">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -63,40 +73,82 @@
   export default {
     name: "",
     components: {
-        CandidateDeteil
+      CandidateDeteil
     },
     props: {},
     data() {
       return {
         drawerCandidateVisible: false,
-        candidateSearch:{
-            jobName:'',
-            place:''
+        moveCndidateVisible: false,
+        candidateSearch: {
+          jobName: '',
+          place: ''
         },
-        tableData:[],
+        options: [{
+          value: '初选通过'
+        }, {
+          value: '初试通过',
+        }, {
+          value: '复试通过',
+        }, {
+          value: '发放offer',
+        }, {
+          value: '进入人才库',
+        }],
+        moveValue: '',
+        tableData: [],
         direction: 'ttb',
-        nowPage:1,
-        pageCount:5,
+        nowPage: 1,
+        pageCount: 5,
         currentPage: 1,
         allJobDataCount: 0,
-        resumedetail:'',
-        userid:''
+        resumedetail: '',
+        userid: '',
+        moveUserId:'',
+        moveJobId:''
       }
     },
     computed: {},
     watch: {},
     created() {
-        this.searchCandidateInfoByPage();
-        this.getJobCount()
+      this.searchCandidateInfoByPage();
+      this.getCandidateCount()
     },
     mounted() {},
     beforeDestroy() {},
     methods: {
-      searchBtn() {},
-      openCandidateDetail(data,userid) {
-          this.drawerCandidateVisible = true;
-          this.resumedetail = data;
-          this.userid = userid
+      onMoveCandidate() {
+        this.$ajax({
+          method: 'post',
+          url: 'changeCandidateState',
+          data: {
+            jobId:this.moveJobId,
+            userId: this.moveUserId,
+            state:this.moveValue
+          }
+        }).then((res) => {
+          if (res) {
+            this.moveCndidateVisible = false;
+            this.searchCandidateInfoByPage();
+          }
+        }, (err) => {
+          this.$message.error('服务器开小差');
+        })
+      },
+      moveCandidateTo(jobId,userId) {
+        this.moveCndidateVisible = true;
+        this.moveJobId = jobId;
+        this.moveUserId = userId
+      },
+
+      searchBtn() {
+        this.searchCandidateInfoByPage();
+        this.getCandidateCount();
+      },
+      openCandidateDetail(data, userid) {
+        this.drawerCandidateVisible = true;
+        this.resumedetail = data;
+        this.userid = userid
       },
       searchCandidateInfoByPage() {
         this.$ajax({
@@ -106,7 +158,7 @@
             ...this.candidateSearch,
             nowPage: this.nowPage,
             pageCount: this.pageCount,
-            userid:this.$cookie.getCookie('userid')
+            userid: this.$cookie.getCookie('userid')
           }
         }).then((res) => {
           if (res) {
@@ -125,15 +177,14 @@
 
 
       },
-      async getJobCount() {
+      async getCandidateCount() {
         let allJobDataCount = await this.getData('searchCandidateCount', {
-            ...this.candidateSearch,
-            userid:this.$cookie.getCookie('userid')
+          ...this.candidateSearch,
+          userid: this.$cookie.getCookie('userid')
         });
-        console.log(allJobDataCount,'ahah')
         this.allJobDataCount = allJobDataCount.data[0]['count(1)']
       },
-        handleSizeChange(e) {
+      handleSizeChange(e) {
         this.pageCount = e;
         this.nowPage = 1;
         this.searchCandidateInfoByPage();
@@ -155,15 +206,18 @@
 </script>
 
 <style style="text/less"  lang="less"  scoped>
-.wrapper{
-    height:100%;
+  .wrapper {
+    height: 100%;
     overflow: auto;
+
     .candidate-info {
       .job-table {
         margin-bottom: 20px;
       }
+
       .block {
         text-align: center;
+
         span,
         ul li {
           font-size: 16px !important;
@@ -173,5 +227,5 @@
 
 
     }
-}
+  }
 </style>
