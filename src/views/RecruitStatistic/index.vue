@@ -1,30 +1,49 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-22 11:39:30
- * @LastEditTime: 2020-03-28 21:10:37
+ * @LastEditTime: 2020-03-28 22:28:16
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\DeliveryFeedback\index.vue
  -->
 <template>
   <div class="wrapper">
+    <div class="search-screen">
+      <el-form :inline="true" :model="studentSearch" class="demo-form-inline">
+        <el-form-item label="专业">
+          <el-input v-model="studentSearch.major" placeholder="输入专业"></el-input>
+        </el-form-item>
+        <el-form-item label="性别">
+          <el-input v-model="studentSearch.sex" placeholder="输入性别"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="searchBtn">查询</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
     <!--已就业信息 -->
     <div class="delivery-info">
       <el-table class="job-table" :data="tableData" stripe style="width: 100%">
-        <el-table-column prop="company_name" label="投递公司" width="180" align="center">
+        <el-table-column prop="student_name" label="姓名" width="180" align="center">
         </el-table-column>
-        <el-table-column prop="deliver_jobname" label="投递职位" align="center">
+        <el-table-column prop="student_id" label="学号" align="center">
         </el-table-column>
-        <el-table-column prop="deliver_address" label="工作地点" align="center">
+        <el-table-column prop="major" label="专业" align="center">
         </el-table-column>
-        <el-table-column prop="deliver_state" label="投递状态" align="center">
+        <el-table-column prop="sex" label="性别" align="center">
         </el-table-column>
-        
+        <el-table-column prop="company_name" label="公司名称" align="center">
+        </el-table-column>
+        <el-table-column prop="job_name" label="职位" align="center">
+        </el-table-column>
       </el-table>
     </div>
-
+    <div class="block">
+      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 20]" :page-size="5" layout="total, sizes, prev, pager, next, jumper" :total="allJobDataCount">
+      </el-pagination>
+    </div>
     <!-- 弹框 -->
-    
+
   </div>
 </template>
 
@@ -35,96 +54,73 @@
     props: {},
     data() {
       return {
-        confirmJobVisible: false,
         tableData: [],
         userid: '',
-        confirmData: '',
-        aleardyChooseCompany: false
+        nowPage: 1,
+        pageCount: 5,
+        currentPage:1,
+        allJobDataCount:0,
+        studentSearch: {
+          major: '',
+          sex: '',
+        }
       }
     },
     computed: {},
     watch: {},
     created() {
-    //   this.getDeliverFeedback(); //获取投递职位列表
-    //   this.getEnetryJob(); //获取已入职公司
-    //   this.getResumeData()
+      this.getEntryStudentByPage();
+      this.getEntryStudentCount();
     },
     mounted() {},
     beforeDestroy() {},
     methods: {
-      getDeliverFeedback() {
-        this.$ajax({
+      searchBtn() {
+          this.getEntryStudentByPage();
+          this.getEntryStudentCount();
+      },
+      getEntryStudentCount(){
+          this.$ajax({
           method: 'post',
-          url: 'getDeliverFeedback',
+          url: 'getEntryStudentCount',
           data: {
-            userid: this.$cookie.getCookie('userid')
+            ...this.studentSearch,
           }
         }).then((res) => {
-          if (res.statusCode == 200) {
-            console.log(res);
-            this.tableData = res.data
+            this.allJobDataCount = res.data[0]['count(1)']
+        }, (err) => {
+          this.$message.error('服务器开小差');
+        })
+      },
+      getEntryStudentByPage() {
+        this.$ajax({
+          method: 'post',
+          url: 'getEntryStudentByPage',
+          data: {
+            ...this.studentSearch,
+            nowPage: this.nowPage,
+            pageCount: this.pageCount
           }
+        }).then((res) => {
+          console.log(res);
+          this.tableData = res.data
         }, (err) => {
           this.$message.error('服务器开小差');
         })
 
 
       },
-      async onConfirmJob() {
-        this.confirmJobVisible = false;
-        let resume = await this.getResumeData();
-        let sex = JSON.parse(resume.data.personinfo).sex;
-        let major = JSON.parse(resume.data.educationinfo).major;
-        console.log(resume)
-        this.$ajax({
-          method: 'post',
-          url: 'confirmEnetryJob',
-          data: {
-            ...this.confirmData,
-            userid: this.$cookie.getCookie('userid'),
-            sex:sex?'女':'男',
-            major
-          }
-        }).then((res) => {
-          if (res.statusCode == 200) {
-            this.$showMessage('保存成功', 'success');
-            this.getEnetryJob();
-          }else{
-            this.$showMessage('您已有了入职信息，请勿重复操作', 'error');
-          }
-        }, (err) => {
-          this.$message.error('服务器开小差');
-        })
+       handleSizeChange(e) {
+        this.pageCount = e;
+        this.nowPage = 1;
+        this.getEntryStudentByPage();
       },
-      openConfirmJobVisible(data) {
-        this.confirmJobVisible = true;
-        this.confirmData = data;
+      handleCurrentChange(e) {
+        this.nowPage = e;
+        this.getEntryStudentByPage();
       },
-      getEnetryJob() {
-        this.$ajax({
-          method: 'post',
-          url: 'getEnetryJob',
-          data: {
-            userid: this.$cookie.getCookie('userid')
-          }
-        }).then((res) => {
-          if (res.statusCode == 200) {
-            this.aleardyChooseCompany = res.data[0].job_id;
-            console.log(this.aleardyChooseCompany)
-          }
-        }, (err) => {
-          this.$message.error('服务器开小差');
-        })
-      },
-      getResumeData(){
-       return this.$ajax({
-          method: 'post',
-          url: 'getResumeData',
-          data: { 
-            userid: this.$cookie.getCookie('userid')
-          }
-        })
-      }
+
+
 
     },
   }
@@ -151,6 +147,11 @@
       }
 
 
+    }
+    .block{
+        margin-top:20px;
+        margin:0 auto;
+        text-align: center;
     }
   }
 </style>
