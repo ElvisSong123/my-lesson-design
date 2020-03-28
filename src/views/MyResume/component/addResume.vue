@@ -323,8 +323,8 @@
 
         ...resumeData,
 
-        clonePerson: null,
-        cloneEducation: null,
+        clonePerson:'',
+        cloneEducation: [],
         cloneInternship: [],
         cloneInternshipNew:[],
         cloneProject: [],
@@ -426,11 +426,11 @@
           }
         }).then((res) => {
           if (res.statusCode == 200) {
+            console.log(res)
             this.clonePerson = JSON.parse(res.data.personinfo) || [];
             this.cloneEducation = JSON.parse(res.data.educationinfo) || [];
             this.cloneInternship = JSON.parse(res.data.internshipinfo) && JSON.parse(res.data.internshipinfo).data || [];
             this.cloneProject = JSON.parse(res.data.projectinfo) && JSON.parse(res.data.projectinfo).data || [];
-           
             this.cloneMajor = JSON.parse(res.data.majorskill) && JSON.parse(res.data.majorskill).data.majorSkill.split('//') || [];
             this.cloneEvaluate = JSON.parse(res.data.introduce) && JSON.parse(res.data.introduce).data.introduce.split('//') || [];
           }

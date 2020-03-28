@@ -37,6 +37,8 @@
             {{row.jobName}}
           </div>
         </el-table-column>
+        <el-table-column prop="addTime" label="发布时间" align="center">
+        </el-table-column>
         <el-table-column label="操作" width="180" align="center">
           <template slot-scope="{row}">
             <el-button type="success" v-if="!aleadyDeliver.includes(row.job_id)" @click="openDeliverJobVisible(row)">投递</el-button>
@@ -217,7 +219,7 @@
         this.currentJobInfo = data
       },
       /**
-       * @description: 投递职位
+       * @description: 投递职位console.log(data)
        * @param {type} 
        * @return: 
        */
@@ -226,13 +228,13 @@
         let res = await this.getData('getResumeData', {}, this.$cookie.getCookie('userid'));
         if (res.statusCode == 200) {
           const { userid, ...resumeData } = res.data;
-          const { corp_id, job_id, job_address, job_name } = this.currentJobInfo;
-          let sendData = { corp_id, job_id, job_address, job_name, userid, resumeData,deliverState:'简历筛选' }; 
+          const { corp_id, job_id, job_address, job_name,company_name} = this.currentJobInfo;
+          let sendData = { corp_id, job_id, job_address, job_name,company_name, userid, resumeData,deliverState:'简历筛选' }; 
           this.$ajax({
             method: 'post',
             url:'addDeliverResume',
             data:sendData
-          }).then((res)=>{2
+          }).then((res)=>{ 
             if(res.statusCode == 200){
               this.$showMessage('投递成功','success');
               this.getDeliverResume();
@@ -280,6 +282,7 @@
               });
             }
             this.tableData = res;
+            console.log(this.tableData,'hellohello')
           }
         }, (err) => {
           this.$message.error('服务器开小差');

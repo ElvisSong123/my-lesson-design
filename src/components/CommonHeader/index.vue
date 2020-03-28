@@ -47,19 +47,31 @@
       this.userid = this.$cookie.getCookie('userid');
       this.username = this.$cookie.getCookie('username')
       this.getAvatar()
-      
     },
     mounted() {},
     beforeDestroy() {},
     methods: {
       getAvatar() {
-        axios.get(`http://localhost:12306/getAvatar?username=${this.userid}`, { responseType: 'arraybuffer' })
-          .then((res) => {
-            this.imgURL = `data: image/jpeg;base64,${btoa(new Uint8Array(res.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))}`;
-            window.sessionStorage.setItem('avatar', this.imgURL);
-          }, (err) => {
-            this.imgURL = ''
-          });
+        // axios.get(`http://localhost:12306/getAvatar?username=${this.userid}`, { responseType: 'arraybuffer' })
+        //   .then((res) => {
+        //     this.imgURL = `data: image/jpeg;base64,${btoa(new Uint8Array(res.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))}`;
+        //     window.sessionStorage.setItem('avatar', this.imgURL);
+        //   }, (err) => {
+        //     this.imgURL = ''
+        //   });
+        this.$ajax({
+          method: 'post',
+          url: 'getUserAvatar',
+          data: {
+            userid:this.userid
+          }
+        }).then((res) => {
+          if (res) {
+            this.imgURL = res
+          }
+        }, (err) => {
+          this.$message.error('服务器开小差');
+        })
       },
       showSelect() {
         let classList = this.$refs.select.classList;

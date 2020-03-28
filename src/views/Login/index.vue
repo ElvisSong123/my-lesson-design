@@ -87,12 +87,20 @@
     beforeDestroy() {},
     methods: {
       getAvatar() {
-        axios.get(`http://localhost:12306/getAvatar?username=${this.ruleForm.username}`, { responseType: 'arraybuffer' })
-          .then((res) => {
-            this.imgURL = `data: image/jpeg;base64,${btoa(new Uint8Array(res.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))}`;
-          }, (err) => {
-            this.imgURL = ''
-          });
+        this.$ajax({
+          method: 'post',
+          url: 'getUserAvatar',
+          data: {
+            userid:this.ruleForm.username
+          }
+        }).then((res) => {
+          if (res) {
+            console.log(res)
+            this.imgURL = res
+          }
+        }, (err) => {
+          this.$message.error('服务器开小差');
+        })
       },
       onInput() {
         this.thro()
@@ -138,7 +146,6 @@
             duration: 1500
           });
           let path = this.redirect(this.ruleForm.status);
-          console.log(path)
           this.$router.push({ path })
         } else {
           this.$message({
@@ -151,7 +158,7 @@
           });
         }
       },
-      redirect(status) {//根据不同的登录身份进行不同的路由跳转
+      redirect(status) { //根据不同的登录身份进行不同的路由跳转
         let direct = '/'
         if (status == '管理员') {
           direct = '/userInfo'
@@ -160,7 +167,7 @@
         } else if (status == '企业用户') {
           direct = '/addCompanyInfo'
         } else {
-          direct = '/addCompanyInfo'
+          direct = '/recruitStatistic'
         }
         return direct;
       }

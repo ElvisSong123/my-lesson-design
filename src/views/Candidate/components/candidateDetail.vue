@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-27 14:49:19
- * @LastEditTime: 2020-03-27 16:47:24
+ * @LastEditTime: 2020-03-27 20:18:45
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\Candidate\components\candidateDetail.vue
@@ -125,7 +125,7 @@
   export default {
     name: "",
     components: {},
-    props: ['resumeData','userid'],
+    props: ['resumeData', 'userid'],
     data() {
       return {
         imgURL: '',
@@ -136,14 +136,14 @@
         cloneProject: [],
         cloneMajor: null,
         cloneEvaluate: null,
-        imgAvatar:''
+        imgAvatar: ''
       }
     },
     computed: {},
     watch: {},
     created() {
-       this.initResumedata(this.resumeData);
-       this.getAvatar(this.userid)
+      this.initResumedata(this.resumeData);
+      this.getAvatar(this.userid)
     },
     mounted() {},
     beforeDestroy() {},
@@ -161,8 +161,8 @@
           this.haveResume = true
         }
       },
-      getAvatar(userid){
-          this.$ajax({
+      getAvatar(userid) {
+        this.$ajax({
           method: 'post',
           url: 'getUserAvatar',
           data: {

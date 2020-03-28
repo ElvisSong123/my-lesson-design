@@ -16,7 +16,7 @@ if(sessionId == '管理员'){//根据不同的身份进行不同的路由重定�
 }else if(sessionId == '企业用户'){
   direct = '/addCompanyInfo'
 }else{
-  direct = '/addCompanyInfo'
+  direct = '/recruitStatistic'
 }
 
 let routeProtect = (sessionId,nowStatus)=>{
@@ -60,17 +60,16 @@ const routes = [{
       beforeEnter:routeProtect(sessionId,'学生'),
     },
     {
-      path: 'recruitStatistic',
-      name: 'recruitStatistic',
-      component: () => import('@/views/RecruitStatistic/index.vue'),
-      beforeEnter:routeProtect(sessionId,'学生'),
-    },
-    {
       path: 'deliveryFeedback',
       name: 'deliveryFeedback',
       component: () => import('@/views/DeliveryFeedback/index.vue'),
       beforeEnter:routeProtect(sessionId,'学生'),
-    }, {
+    },{
+      path: 'personalCenter',
+      name: 'personalCenter',
+      component: () => import('@/views/personalCenter/index.vue'),
+      beforeEnter:routeProtect(sessionId,'学生'),
+    },{
       path: 'addCompanyInfo',
       name: 'addCompanyInfo',
       component: () => import('@/views/addCompanyInfo/index.vue'),
@@ -86,16 +85,27 @@ const routes = [{
       component: () => import('@/views/Candidate/index.vue'),
       beforeEnter:routeProtect(sessionId,'企业用户'),
     },{
+      path: 'alreadyEntryJob',
+      name: 'alreadyEntryJob',
+      component: () => import('@/views/alreadyEntryJob/index.vue'),
+      beforeEnter:routeProtect(sessionId,'企业用户'),
+    },{
       path: 'userInfo',
       name: 'userInfo',
       component: () => import('@/views/userInfo/index.vue'),
-      beforeEnter:routeProtect(sessionId,'管理员'),
+      beforeEnter:routeProtect(sessionId,'管理员'),//aleadtEntryJob
     }, {
       path: 'userApply',
       name: 'userApply',
       component: () => import('@/views/userApply/index.vue'),
       beforeEnter:routeProtect(sessionId,'管理员'),
-    }
+    },
+    {
+      path: 'recruitStatistic',
+      name: 'recruitStatistic',
+      component: () => import('@/views/RecruitStatistic/index.vue'),
+      beforeEnter:routeProtect(sessionId,'老师'),
+    },
 
   ]
 },

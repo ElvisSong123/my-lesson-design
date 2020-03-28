@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-03-22 11:39:30
+ * @LastEditTime: 2020-03-27 20:27:02
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \毕业设计\client\src\toolsFunc\axios.js
+ */
 //引入安装的axios插件
 import axios from 'axios'
 

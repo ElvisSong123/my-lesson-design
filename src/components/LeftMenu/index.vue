@@ -69,21 +69,19 @@
           showChild: false,
           children: [],
           whoCanSee: '学生',
-        },
-        {
-          path: '/recruitStatistic',
-          name: 'recruitStatistic',
-          title: '招聘统计',
-          src: 'icon-tongji',
-          isItemClick: false,
-          children: [],
-          whoCanSee: '学生',
-        },
-        {
+        },{
           path: '/deliveryFeedback',
           name: 'deliveryFeedback',
           title: '投递反馈',
           src: 'icon-tuijianfankui',
+          isItemClick: false,
+          children: [],
+          whoCanSee: '学生'
+        },{
+          path: '/personalCenter',
+          name: 'personalCenter',
+          title: '个人中心',
+          src: 'icon-houxuanren',
           isItemClick: false,
           children: [],
           whoCanSee: '学生'
@@ -113,6 +111,14 @@
           children: [],
           whoCanSee: '企业用户'
         },{
+          path: '/alreadyEntryJob',
+          name: 'alreadyEntryJob',
+          title: '确认入职',
+          src: 'icon-yiruzhi',
+          isItemClick: false,
+          children: [],
+          whoCanSee: '企业用户'
+        },{
           path: '/userInfo',
           name: 'userInfo',
           title: '用户信息',
@@ -128,6 +134,15 @@
           isItemClick: false,
           children: [],
           whoCanSee: '管理员'
+        },
+        {
+          path: '/recruitStatistic',
+          name: 'recruitStatistic',
+          title: '就业统计',
+          src: 'icon-tongji',
+          isItemClick: false,
+          children: [],
+          whoCanSee: '老师',
         },
         ]
       }
