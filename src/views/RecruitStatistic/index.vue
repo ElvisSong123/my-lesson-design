@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-22 11:39:30
- * @LastEditTime: 2020-03-28 22:28:16
+ * @LastEditTime: 2020-03-28 23:08:40
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\DeliveryFeedback\index.vue
@@ -20,6 +20,10 @@
           <el-button type="primary" @click="searchBtn">查询</el-button>
         </el-form-item>
       </el-form>
+
+      <div class="precent">
+          就业率：{{(allJobStudent / allStudent).toFixed(2) * 100 }} %
+      </div>
     </div>
     <!--已就业信息 -->
     <div class="delivery-info">
@@ -60,6 +64,8 @@
         pageCount: 5,
         currentPage:1,
         allJobDataCount:0,
+        allJobStudent:0,
+        allStudent:0,
         studentSearch: {
           major: '',
           sex: '',
@@ -70,24 +76,41 @@
     watch: {},
     created() {
       this.getEntryStudentByPage();
-      this.getEntryStudentCount();
+      this.getEntryStudentCount(this.studentSearch,(res)=>{this.allJobDataCount = res.data[0]['count(1)']});
+      this.getAllJobStudent();//获取已入职学生总数
+      this.getAllStudentCount()//获取注册学生总数
     },
     mounted() {},
     beforeDestroy() {},
     methods: {
       searchBtn() {
           this.getEntryStudentByPage();
-          this.getEntryStudentCount();
+          this.getEntryStudentCount(this.studentSearch,(res)=>{this.allJobDataCount = res.data[0]['count(1)']});
       },
-      getEntryStudentCount(){
+      getAllJobStudent(){
+         this.getEntryStudentCount({major:'',sex:''},(res)=>{this.allJobStudent = res.data[0]['count(1)']});
+      },
+      getAllStudentCount(){
           this.$ajax({
+          method: 'post',
+          url: 'getAllStudentCount',
+          data: {}
+        }).then((res) => {
+            console.log(res);
+            this.allStudent =  res.data[0]['count(1)']
+        }, (err) => {
+          this.$message.error('服务器开小差');
+        })
+      },
+      getEntryStudentCount(data,callback){
+        this.$ajax({
           method: 'post',
           url: 'getEntryStudentCount',
           data: {
-            ...this.studentSearch,
+            ...data,
           }
         }).then((res) => {
-            this.allJobDataCount = res.data[0]['count(1)']
+            callback(res)
         }, (err) => {
           this.$message.error('服务器开小差');
         })
@@ -101,8 +124,7 @@
             nowPage: this.nowPage,
             pageCount: this.pageCount
           }
-        }).then((res) => {
-          console.log(res);
+        }).then((res) => { 
           this.tableData = res.data
         }, (err) => {
           this.$message.error('服务器开小差');
@@ -130,7 +152,11 @@
   .wrapper {
     height: 100%;
     overflow: auto;
-
+    .search-screen{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
     .delivery-info {
       .job-table {
         margin-bottom: 20px;
