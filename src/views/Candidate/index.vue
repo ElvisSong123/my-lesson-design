@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-26 15:29:17
- * @LastEditTime: 2020-03-27 20:06:57
+ * @LastEditTime: 2020-03-28 23:44:38
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\Candidate\index.vue
@@ -52,7 +52,7 @@
 
     <!-- 抽屉弹框 -->
     <el-drawer :visible.sync="drawerCandidateVisible" :direction="direction" size="100%">
-      <Candidate-deteil :resumeData="resumedetail" :userid="userid"></Candidate-deteil>
+      <Candidate-deteil v-if="drawerCandidateVisible" :resumeData="resumedetail" :userid="userid"></Candidate-deteil>
     </el-drawer>
 
     <el-dialog title="移动候选人" :visible.sync="moveCndidateVisible" width="30%" center>
@@ -69,7 +69,8 @@
 </template>
 
 <script>
-  import CandidateDeteil from './components/candidateDetail'
+  import CandidateDeteil from './components/candidateDetail';
+  import deepClone from '@/toolsFunc/deepClone.js'
   export default {
     name: "",
     components: {
@@ -146,8 +147,9 @@
         this.getCandidateCount();
       },
       openCandidateDetail(data, userid) {
-        this.drawerCandidateVisible = true;
+       
         this.resumedetail = data;
+        this.drawerCandidateVisible = true;
         this.userid = userid
       },
       searchCandidateInfoByPage() {

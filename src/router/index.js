@@ -105,6 +105,11 @@ const routes = [{
       name: 'recruitStatistic',
       component: () => import('@/views/RecruitStatistic/index.vue'),
       beforeEnter:routeProtect(sessionId,'老师'),
+    },{
+      path: 'announcement',
+      name: 'announcement',
+      component: () => import('@/views/announcement/index.vue'),
+      beforeEnter:routeProtect(sessionId,'老师'),
     },
 
   ]

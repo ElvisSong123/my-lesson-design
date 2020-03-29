@@ -143,7 +143,15 @@
           isItemClick: false,
           children: [],
           whoCanSee: '老师',
-        },
+        },{
+          path: '/announcement',
+          name: 'announcement',
+          title: '发布公告',
+          src: 'icon-tuijianfankui',
+          isItemClick: false,
+          children: [],
+          whoCanSee: '老师',
+        }
         ]
       }
     },

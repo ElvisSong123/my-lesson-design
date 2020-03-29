@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-28 13:56:12
- * @LastEditTime: 2020-03-28 21:07:07
+ * @LastEditTime: 2020-03-29 14:00:08
  * @LastEditors: Please set LastEditors
  * @Description: 学生个人中心
  * @FilePath: \毕业设计\client\src\views\personalCenter\index.vue
@@ -39,7 +39,9 @@
     </div>
 
     <div class="public-announce">
-      <div class="title">学院通知</div>
+      <div class="title">
+        <i class="iconfont-ats icon-tongzhi" style="margin-right:10px"></i>
+        学院通知</div>
       <div class="choose-date" ref="chooseDate" @click="onChooseDate">
         <span class="active">近7天</span>
         <span>近15天</span>
@@ -107,6 +109,7 @@
         infoDetail: '',
         tableData: [],
         announceData: [],
+        startChooseDate:'',
         editData: false,
         personDialogVisible: false,
         delDialogVisible: false,
@@ -124,8 +127,8 @@
         personInfoForm: {
           company_name: '',
           deliver_jobname: '',
-          major:'',
-          sex:'男'
+          major: '',
+          sex: '男'
         },
       }
     },
@@ -133,11 +136,26 @@
     watch: {},
     created() {
       this.getPersonData();
+      this.startChooseDate = this.fun_date(-7);
       this.getAnnounce(); //获取学校公告
     },
     mounted() {},
     beforeDestroy() {},
     methods: {
+      /**
+       * @description: 获取指定多少天前的日期
+       * @param {type} 
+       * @return: 
+       */      
+      //
+      fun_date(num) {
+        var date1 = new Date(); 
+        var time1 = date1.getFullYear() + "-" + (date1.getMonth() + 1) + "-" + date1.getDate();
+        var date2 = new Date(date1);
+        date2.setDate(date1.getDate() + num); 
+        var time2 = date2.getFullYear() + "-" + ((date2.getMonth() + 1 + '').padStart(2,'0')) + "-" + (date2.getDate()+'').padStart(2,'0'); 
+        return time2;
+      },
       openDetailVisible(data) {
         this.infoDetail = data;
         this.infoDetailVisible = true;
@@ -147,13 +165,25 @@
         choose.forEach((ele) => {
           ele.classList.remove('active')
         })
-        e.target.classList.add('active')
+        e.target.classList.add('active');
+        if(e.target.innerHTML.includes('7')){
+          this.startChooseDate = this.fun_date(-7)
+        }else if(e.target.innerHTML.includes('15')){
+          this.startChooseDate = this.fun_date(-15)
+        }else{
+          this.startChooseDate = this.fun_date(-30)
+        }
+        this.getAnnounce()
+
       },
       getAnnounce() {
         this.$ajax({
           method: 'post',
           url: 'getAnnounceInfo',
-          data: {}
+          data: {
+            startChooseDate:this.startChooseDate,
+            endChooseDate:this.fun_date(0)
+          }
         }).then((res) => {
           console.log(res.data);
           this.announceData = res.data
@@ -251,7 +281,8 @@
 
         i {
           font-size: 20px;
-          color: #63d3c9
+          color: #63d3c9;
+          margin-right: 10px;
         }
       }
 
@@ -278,6 +309,11 @@
       .title {
         font-size: 20px;
         font-weight: bold;
+
+        i {
+          font-size: 20px;
+          color: #63d3c9
+        }
       }
 
       .choose-date {
@@ -292,6 +328,7 @@
           font-size: 16px;
           text-align: center;
           cursor: pointer;
+
           &.active {
             background: #42e1d3;
             color: #fff;
