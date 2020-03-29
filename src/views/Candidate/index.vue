@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-26 15:29:17
- * @LastEditTime: 2020-03-28 23:44:38
+ * @LastEditTime: 2020-03-29 14:50:33
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\Candidate\index.vue
@@ -39,7 +39,7 @@
         </el-table-column>
         <el-table-column label="操作" width="180" align="center">
           <template slot-scope="{row}">
-            <el-button type="success" @click="moveCandidateTo(row.job_id,row.user_id)">移动到</el-button>
+            <el-button type="success" @click="moveCandidateTo(row)">移动到</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -106,7 +106,9 @@
         resumedetail: '',
         userid: '',
         moveUserId:'',
-        moveJobId:''
+        moveJobId:'',
+        moveCompanyName:'',
+        moveJobName:'',
       }
     },
     computed: {},
@@ -125,7 +127,9 @@
           data: {
             jobId:this.moveJobId,
             userId: this.moveUserId,
-            state:this.moveValue
+            state:this.moveValue,
+            moveCompanyName:this.moveCompanyName,
+            moveJobName:this.moveJobName
           }
         }).then((res) => {
           if (res) {
@@ -136,10 +140,13 @@
           this.$message.error('服务器开小差');
         })
       },
-      moveCandidateTo(jobId,userId) {
+      moveCandidateTo(row) { 
+        console.log(row)
         this.moveCndidateVisible = true;
-        this.moveJobId = jobId;
-        this.moveUserId = userId
+        this.moveJobId =  row.job_id;
+        this.moveUserId = row.user_id;
+        this.moveCompanyName = row.company_name;
+        this.moveJobName = row.deliver_jobname;
       },
 
       searchBtn() {
