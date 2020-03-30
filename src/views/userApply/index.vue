@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-26 12:49:59
- * @LastEditTime: 2020-03-26 20:03:40
+ * @LastEditTime: 2020-03-29 19:53:12
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\userInfo\index.vue
@@ -35,7 +35,7 @@
 
     <!-- 弹窗模块 -->
     <el-dialog title="确认添加？" :visible.sync="addUserVisible" width="30%" center>
-      <span>确认删除?</span>
+      <span>确认添加?</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addUserVisible = false">取 消</el-button>
         <el-button type="primary" @click="onAddUser">确 定</el-button>

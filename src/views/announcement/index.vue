@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-29 10:57:28
- * @LastEditTime: 2020-03-29 14:02:15
+ * @LastEditTime: 2020-03-29 23:01:54
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\announcement\index.vue
@@ -155,7 +155,7 @@
 
     .show-message {
       flex: 1;
-
+      overflow: auto;
       .title {
         font-size: 20px;
         font-weight: bold;

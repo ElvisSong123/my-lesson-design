@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-23 11:51:11
- * @LastEditTime: 2020-03-26 22:50:26
+ * @LastEditTime: 2020-03-30 10:11:38
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\addJobInfo\index.vue
@@ -56,7 +56,7 @@
     </div>
 
     <!-- 弹窗模块 -->
-    <el-dialog title="添加职位" :visible.sync="addJobVisible" width="37%" center>
+    <el-dialog title="添加职位" :visible.sync="addJobVisible" width="37%" center @close="onJobCancel">
       <el-form id="addJobInfo" ref="addJobInfo" :rules="addJobInfoRules" :model="addJobInfo" label-width="80px">
         <el-form-item label="职位名称" prop="jobName">
           <el-input v-model="addJobInfo.jobName"></el-input>
@@ -297,6 +297,7 @@
       onJobCancel() {
         this.resetFormRule('addJobInfo')
         this.addJobVisible = false;
+        this.isEditJobInfo = false;
         this.addJobInfo = {
           jobName: '',
           address: '',

@@ -160,7 +160,9 @@
 
 <style style="text/less"  lang="less">
   .wrapper-register {
-    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     height: 100%;
     background-image: url("../../assets/image/register.jpg");
@@ -168,14 +170,6 @@
 
     .content-login {
       width: 400px;
-      height: fit-content;
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      margin: auto;
-
       .avatar {
         width: 100%;
         height: 108px;

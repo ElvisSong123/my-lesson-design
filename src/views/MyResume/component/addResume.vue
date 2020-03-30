@@ -521,8 +521,8 @@
           url: this.isPersonResumeEdit ? 'editPersonData' : 'addPersonData', //判断是编辑数据还是新增数据
           data: {
             ...data,
-            operator: this.$cookie.getCookie('username'),
-            user_id:this.$cookie.getCookie('userid')
+            // operator: this.$cookie.getCookie('username'),
+            userid:this.$cookie.getCookie('userid')
           }
         }).then((res) => {
           if (res.statusCode == 200) {
@@ -549,7 +549,7 @@
           url: this.isEducationEdit ? 'eidtEducationInfo' : 'addEducationInfo', //判断是编辑数据还是新增数据
           data: {
             ...data,
-            operator: this.$cookie.getCookie('username')
+            userid: this.$cookie.getCookie('userid')
           }
         }).then((res) => {
           if (res.statusCode == 200) {
@@ -580,7 +580,7 @@
           url: this.isInternshipEdit ? 'editInternshipInfo' : 'addInternshipInfo', //判断是编辑数据还是新增数据
           data: {
             data,
-            operator: this.$cookie.getCookie('username')
+            userid: this.$cookie.getCookie('userid')
           }
         }).then((res) => {
           if (res.statusCode == 200) {
@@ -611,7 +611,7 @@
           url: this.isProjectEdit?'editProjectInfo':'addProjectInfo', //判断是编辑数据还是新增数据
           data: {
             data,
-            operator: this.$cookie.getCookie('username')
+            userid: this.$cookie.getCookie('userid')
           }
         }).then((res) => {
           if (res.statusCode == 200) {
@@ -641,7 +641,7 @@
           url: this.isEditMajor?'editMajorInfo':'addMajorInfo', //判断是编辑数据还是新增数据
           data: {
             data,
-            operator: this.$cookie.getCookie('username')
+            userid: this.$cookie.getCookie('userid')
           }
         }).then((res) => {
           if (res.statusCode == 200) {
@@ -671,7 +671,7 @@
           url: this.isEditIntroduce?'editIntroduce':'addIntroduce', //判断是编辑数据还是新增数据
           data: {
             data,
-            operator: this.$cookie.getCookie('username')
+            userid: this.$cookie.getCookie('userid')
           }
         }).then((res) => {
           if (res.statusCode == 200) {
@@ -698,7 +698,6 @@
 <style style="text/less" lang="less">
   .wrapper-addResume {
     width: 100%;
-    height: 100%;
 
     .person-info,
     .education,
@@ -752,10 +751,10 @@
     .project-experience.active,
     .major-skill.active,
     .person-evaluate.active{
-      background: rgb(250, 250, 250);
-      height: fit-content;
+      background: rgb(250, 250, 250); 
       padding: 20px;
-
+      height:inherit;
+      // display: flex;
       .show {
         .avatar {
           position: relative;

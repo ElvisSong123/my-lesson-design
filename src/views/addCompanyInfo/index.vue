@@ -74,7 +74,7 @@
           <div class="avatar">
             <div class="title">公司发展</div>
           </div>
-          <div class="click" @click="companyDevelopVisible = true">
+          <div class="click" @click="openCompanyDevelopVisible">
             <i class="iconfont-ats icon-jiahao1"></i>添加
           </div>
         </div>
@@ -115,6 +115,10 @@
             <i class="iconfont-ats  icon-shanchu"></i>
           </span>
         </div>
+        <i class="iconfont-ats icon-tupianquesheng" v-if="imgURL.length == 0" style="font-size:50px;color:rgb(229, 221, 221);"></i>
+        <el-tooltip class="item" v-if="imgURL.length == 0" effect="dark" content="未选择任何图片" placement="top-start">
+          <i class="iconfont-ats icon-tishi" style="margin-top: -16px;color:rgb(247, 39, 39);margin-right:10px"></i>
+        </el-tooltip>
         <el-button class="submit" type="success" @click="submitImg">{{imgUrlArr.length ? '重新上传':'点击上传'}}</el-button>
       </div>
       <div class="img-box" v-if="imgUrlArr.length">
@@ -224,6 +228,7 @@
         isRequestLoading: false,
         companyIntroduceVisible: false,
         isEditCompanyInfo: false,
+        addCompanyInfoFirst: false,
         delIndex: '',
         companyIntroduce: {
           name: '',
@@ -270,6 +275,14 @@
     mounted() {},
     beforeDestroy() {},
     methods: {
+      openCompanyDevelopVisible() {
+        console.log(1235)
+        if (this.addCompanyInfoFirst) {
+          this.$showMessage('请先添加公司基本信息', 'success');
+          return false;
+        }
+        this.companyDevelopVisible = true;
+      },
       getCompanyImg() {
         this.imgUrlArr = [];
         this.$ajax({
@@ -277,9 +290,9 @@
           url: `getCompanyImg?userid=${this.$cookie.getCookie('userid')}`,
         }).then((res) => {
           if (res) {
-            console.log(res,'songbiao')
-            this.imgUrlArr = res.filter(ele=>!ele.includes('avatar-'));
-            this.companyAvatar = res.filter(ele=>ele.includes('avatar-'));
+            console.log(res, 'songbiao')
+            this.imgUrlArr = res.filter(ele => !ele.includes('avatar-'));
+            this.companyAvatar = res.filter(ele => ele.includes('avatar-'));
             console.log(this.companyAvatar)
           }
         }, (err) => {
@@ -291,7 +304,7 @@
        * @param {type} 
        * @return: 
        */
-      submitImg() {//上传企业文化图片请求函数
+      submitImg() { //上传企业文化图片请求函数
         const formData = new FormData(); //使用formdata上传文件
         if (this.imgFile.length) {
           this.imgFile.forEach((ele, index) => {
@@ -332,7 +345,7 @@
             data: formData
           }).then((res) => {
             if (res) {
-               console.log('上传成功')
+              console.log('上传成功')
             }
           }, (err) => {
             console.log('上传失败')
@@ -446,10 +459,15 @@
        * @return: 
        */
       async getCompanyInfo() {
+        this.addCompanyInfoFirst = false;
         let res = await this.getData('getCompanyInfo');
+        if (res.statusCode == 500) {
+          this.addCompanyInfoFirst = true;
+        }
         this.cloneCompanyIntroduce = res.data && JSON.parse(res.data[0].company_infos);
         this.$store.commit('addCompanyInfo', this.cloneCompanyIntroduce); //公司信息存入vuex,用于共享。
-        this.cloneCompanyDevelop = res.data && JSON.parse(res.data[0].company_develop).data;
+        this.cloneCompanyDevelop = res.data && JSON.parse(res.data[0].company_develop) && JSON.parse(res.data[0].company_develop).data || [];
+        console.log(res)
       },
       addCompanyInfo() {
         this.companyIntroduceVisible = true;
@@ -496,6 +514,7 @@
         if (res.statusCode == 200) {
           this.$showMessage(res.message, 'success');
           this.cloneCompanyIntroduce = deepClone(this.companyIntroduce);
+          this.addCompanyInfoFirst = false;
         } else {
           this.$showMessage(res.message, 'error')
         }

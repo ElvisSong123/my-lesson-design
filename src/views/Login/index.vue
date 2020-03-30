@@ -95,8 +95,9 @@
           }
         }).then((res) => {
           if (res) {
-            console.log(res)
             this.imgURL = res
+          }else{
+            this.imgURL = ''
           }
         }, (err) => {
           this.$message.error('服务器开小差');
@@ -177,7 +178,10 @@
 
 <style style="text/less"  lang="less">
   .wrapper-login {
-    position: relative;
+    // position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     height: 100%;
     background-image: url("../../assets/image/register.jpg");
@@ -185,14 +189,6 @@
 
     .content-login {
       width: 400px;
-      height: fit-content;
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      margin: auto;
-
       .avatar {
         width: 100%;
         height: 90px;

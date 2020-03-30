@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-22 11:39:30
- * @LastEditTime: 2020-03-28 20:57:56
+ * @LastEditTime: 2020-03-30 11:55:57
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\DeliveryFeedback\index.vue
@@ -103,7 +103,7 @@
           data: {
             ...this.confirmData,
             userid: this.$cookie.getCookie('userid'),
-            sex:sex?'女':'男',
+            sex:sex?'男':'女',
             major
           }
         }).then((res) => {
