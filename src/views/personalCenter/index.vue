@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-28 13:56:12
- * @LastEditTime: 2020-03-29 14:00:08
+ * @LastEditTime: 2020-04-09 12:35:56
  * @LastEditors: Please set LastEditors
  * @Description: 学生个人中心
  * @FilePath: \毕业设计\client\src\views\personalCenter\index.vue
@@ -48,12 +48,13 @@
         <span>近30天</span>
       </div>
       <div class="content">
-        <ul>
+        <ul v-if="announceData">
           <li v-for="(item,index) in announceData" :key="index" @click="openDetailVisible(item)">
             <span class="order">{{index+1}}</span>
             <span class="span-title">{{item.announce_title}}<span>{{item.time}}</span> </span>
           </li>
         </ul>
+        <div v-else>暂无数据</div>
       </div>
     </div>
 
@@ -339,6 +340,7 @@
       }
 
       .content {
+        
         ul {
           li {
             border-bottom: 1px solid #ccc;
@@ -369,6 +371,13 @@
               }
             }
           }
+        }
+        div{
+          width: 100%;
+          margin-top:100px;
+          font-size: 30px;
+          color:#ccc;
+          text-align: center;
         }
       }
     }

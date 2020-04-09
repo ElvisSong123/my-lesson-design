@@ -29,6 +29,7 @@
 </template>
 
 <script>
+  import md5 from 'blueimp-md5';
   export default {
     name: "",
     components: {},
@@ -95,7 +96,7 @@
 
             }
             formData.append("username", this.ruleForm.username);
-            formData.append("password", this.ruleForm.pass);
+            formData.append("password", md5(md5(this.ruleForm.pass)));
             this.$ajax({
               method: 'post',
               url: `register?username=${this.ruleForm.username}`,
@@ -168,17 +169,12 @@
     height: 100%;
     background-image: url("../../assets/image/register.jpg");
     background-size: 100% 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     .content-login {
       width: 400px;
-      height: fit-content;
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      margin: auto;
-
       .avatar {
         width: 100%;
         height: 108px;

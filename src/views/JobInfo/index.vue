@@ -255,6 +255,7 @@
 
       searchBtn() {
         this.nowPage = 1;
+        this.currentPage = 1;
         this.searchJobInfoByPage();
         this.getJobCount();
       },

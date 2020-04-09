@@ -32,8 +32,9 @@
 </template>
 
 <script>
-  import axios from 'axios'
-  import throttling from '@/toolsFunc/shakeAndThrottling.js'
+  import axios from 'axios';
+  import throttling from '@/toolsFunc/shakeAndThrottling.js';
+  import md5 from 'blueimp-md5';
   export default {
     name: "",
     components: {},
@@ -118,7 +119,7 @@
               url: 'login',
               data: {
                 username: this.ruleForm.username,
-                password: this.ruleForm.password,
+                password: md5(md5(this.ruleForm.password)),
                 status: this.ruleForm.status
               }
             }).then((res) => {

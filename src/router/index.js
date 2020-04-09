@@ -40,7 +40,6 @@ const routes = [{
       name: 'myResume',
       component: () => import('@/views/MyResume/index.vue'),
       beforeEnter:routeProtect(sessionId,'学生'),
-      // redirect: '/myResume/addResume',
       children: [
       {
         path: 'addResume',

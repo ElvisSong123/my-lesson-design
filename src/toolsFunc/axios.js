@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-03-22 11:39:30
- * @LastEditTime: 2020-03-30 12:01:07
+ * @LastEditTime: 2020-04-09 12:47:27
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\toolsFunc\axios.js
@@ -28,7 +28,7 @@ const http = options => {
     //console.log(newOptions);
     axios({
       method: newOptions.method,
-      url: `http://localhost:12306/${newOptions.url}`,
+      url: `http://47.93.33.255/${newOptions.url}`,
       data: newOptions.data,
       params:newOptions.params,
       headers: newOptions.headers

@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-26 15:29:17
- * @LastEditTime: 2020-03-29 14:50:33
+ * @LastEditTime: 2020-04-09 12:45:39
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\Candidate\index.vue
@@ -150,11 +150,12 @@
       },
 
       searchBtn() {
+        this.currentPage = 1;
+        this.nowPage = 1;
         this.searchCandidateInfoByPage();
         this.getCandidateCount();
       },
       openCandidateDetail(data, userid) {
-       
         this.resumedetail = data;
         this.drawerCandidateVisible = true;
         this.userid = userid
