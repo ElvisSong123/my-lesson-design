@@ -105,7 +105,10 @@
       submitInfo() {
         this.$refs['ruleForm'].validate((valid) => {
           if (valid && !this.isRequestRegister) {
-            this.isRequestLogin = true;
+            this.isRequestRegister = true;
+            let date = new Date();
+            let applyTime = `${date.getFullYear()}/${(date.getMonth()+1+'').padStart(2,'0')}/${(date.getDate()+'').padStart(2,'0')} 
+            ${(date.getHours()+'').padStart(2,'0')}:${(date.getMinutes()+'').padStart(2,'0')}`;//记录当前时间
             this.$ajax({
               method: 'post',
               url: 'applyCount',
@@ -113,14 +116,15 @@
                 status:this.ruleForm.status,
                 name: this.ruleForm.name,
                 number: this.ruleForm.number,
-                email: this.ruleForm.email
+                email: this.ruleForm.email,
+                applyTime,
               }
             }).then((res) => {
               this.handleInfo(res);
-              this.isRequestLogin = false;
+              this.isRequestRegister = false;
             }, (err) => {
               this.$message.error('服务器开小差');
-              this.isRequestLogin = false;
+              this.isRequestRegister = false;
 
             })
           } else {

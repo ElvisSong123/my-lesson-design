@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-26 15:29:17
- * @LastEditTime: 2020-04-09 12:45:39
+ * @LastEditTime: 2020-04-09 19:33:53
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\Candidate\index.vue
@@ -218,9 +218,11 @@
 <style style="text/less"  lang="less"  scoped>
   .wrapper {
     height: 100%;
-    overflow: auto;
+    
 
     .candidate-info {
+      height:85%;
+      overflow: auto;
       .job-table {
         margin-bottom: 20px;
       }

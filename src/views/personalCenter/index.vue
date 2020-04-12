@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-28 13:56:12
- * @LastEditTime: 2020-04-09 12:35:56
+ * @LastEditTime: 2020-04-09 20:33:05
  * @LastEditors: Please set LastEditors
  * @Description: 学生个人中心
  * @FilePath: \毕业设计\client\src\views\personalCenter\index.vue
@@ -47,7 +47,8 @@
         <span>近15天</span>
         <span>近30天</span>
       </div>
-      <div class="content">
+      <div class="content" v-loading="isLoading" element-loading-text="拼命加载中" 
+        element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.3)">
         <ul v-if="announceData">
           <li v-for="(item,index) in announceData" :key="index" @click="openDetailVisible(item)">
             <span class="order">{{index+1}}</span>
@@ -89,10 +90,10 @@
         <el-button type="primary" @click="onDeleteJobInfo">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="详情" :visible.sync="infoDetailVisible" width="50%" height="40%" center>
+    <el-dialog title="详情" :visible.sync="infoDetailVisible" width="60%" height="80%" center>
       <div>
         <div style="font-size:20px;font-weight:bold;margin-bottom:20px" class="title">标题：{{infoDetail.announce_title}}</div>
-        <div style="line-height:25px;height:200px;overflow:auto" class="title">正文：{{infoDetail.announce_content}}</div>
+        <div style="line-height:25px;height:350px;overflow:auto" class="title">正文：{{infoDetail.announce_content}}</div>
       </div>
     </el-dialog>
   </div>
@@ -107,10 +108,11 @@
     data() {
       return {
         infoDetailVisible: false,
+        isLoading:true,
         infoDetail: '',
         tableData: [],
         announceData: [],
-        startChooseDate:'',
+        startChooseDate: '',
         editData: false,
         personDialogVisible: false,
         delDialogVisible: false,
@@ -147,14 +149,14 @@
        * @description: 获取指定多少天前的日期
        * @param {type} 
        * @return: 
-       */      
+       */
       //
       fun_date(num) {
-        var date1 = new Date(); 
+        var date1 = new Date();
         var time1 = date1.getFullYear() + "-" + (date1.getMonth() + 1) + "-" + date1.getDate();
         var date2 = new Date(date1);
-        date2.setDate(date1.getDate() + num); 
-        var time2 = date2.getFullYear() + "-" + ((date2.getMonth() + 1 + '').padStart(2,'0')) + "-" + (date2.getDate()+'').padStart(2,'0'); 
+        date2.setDate(date1.getDate() + num);
+        var time2 = date2.getFullYear() + "-" + ((date2.getMonth() + 1 + '').padStart(2, '0')) + "-" + (date2.getDate() + '').padStart(2, '0');
         return time2;
       },
       openDetailVisible(data) {
@@ -167,27 +169,28 @@
           ele.classList.remove('active')
         })
         e.target.classList.add('active');
-        if(e.target.innerHTML.includes('7')){
+        if (e.target.innerHTML.includes('7')) {
           this.startChooseDate = this.fun_date(-7)
-        }else if(e.target.innerHTML.includes('15')){
+        } else if (e.target.innerHTML.includes('15')) {
           this.startChooseDate = this.fun_date(-15)
-        }else{
+        } else {
           this.startChooseDate = this.fun_date(-30)
         }
         this.getAnnounce()
 
       },
       getAnnounce() {
+        this.isLoading = true;
         this.$ajax({
           method: 'post',
           url: 'getAnnounceInfo',
           data: {
-            startChooseDate:this.startChooseDate,
-            endChooseDate:this.fun_date(0)
+            startChooseDate: this.startChooseDate,
+            endChooseDate: this.fun_date(0)
           }
-        }).then((res) => {
-          console.log(res.data);
-          this.announceData = res.data
+        }).then((res) => { 
+          this.announceData = res.data;
+          this.isLoading = false;
         })
       },
       onPersonSave() {
@@ -305,7 +308,7 @@
       flex: 1;
       background: #fff;
       margin-top: 20px;
-      overflow: auto;
+      
 
       .title {
         font-size: 20px;
@@ -340,7 +343,8 @@
       }
 
       .content {
-        
+        height: 70%;
+        overflow: auto;
         ul {
           li {
             border-bottom: 1px solid #ccc;
@@ -372,11 +376,12 @@
             }
           }
         }
-        div{
+
+        div {
           width: 100%;
-          margin-top:100px;
+          margin-top: 100px;
           font-size: 30px;
-          color:#ccc;
+          color: #ccc;
           text-align: center;
         }
       }

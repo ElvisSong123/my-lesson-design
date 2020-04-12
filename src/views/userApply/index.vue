@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-26 12:49:59
- * @LastEditTime: 2020-03-29 19:53:12
+ * @LastEditTime: 2020-04-09 17:08:17
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\userInfo\index.vue
@@ -18,6 +18,8 @@
         <el-table-column prop="email" label="邮箱" align="center">
         </el-table-column>
         <el-table-column prop="status" label="身份" align="center">
+        </el-table-column>
+        <el-table-column prop="apply_time" label="申请时间" align="center">
         </el-table-column>
         <el-table-column label="操作" width="280" align="center">
           <template slot-scope="{row}">

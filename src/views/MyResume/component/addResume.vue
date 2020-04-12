@@ -475,6 +475,10 @@
         this.resetFormInfo(this.internshipInfo);
       },
       onAddInfoShow(e, item) { //点击添加按钮打开添加弹窗
+        if(this.clonePerson.length == 0){
+          this.$showMessage('请先添加个人信息','error');
+          return
+        }
         this[item.dialog] = true
       },
       onPersonInfoShow(dialog) { //点击个人信息添加按钮打开添加弹窗
@@ -522,7 +526,8 @@
           data: {
             ...data,
             // operator: this.$cookie.getCookie('username'),
-            userid:this.$cookie.getCookie('userid')
+            userid:this.$cookie.getCookie('userid'),
+            operator:data.name
           }
         }).then((res) => {
           if (res.statusCode == 200) {

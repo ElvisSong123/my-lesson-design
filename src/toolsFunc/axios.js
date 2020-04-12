@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-03-22 11:39:30
- * @LastEditTime: 2020-04-09 12:47:27
+ * @LastEditTime: 2020-04-12 11:25:48
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\toolsFunc\axios.js
@@ -29,8 +29,8 @@ const http = options => {
     axios({
       method: newOptions.method,
       url: `http://47.93.33.255/${newOptions.url}`,
-      data: newOptions.data,
-      params:newOptions.params,
+      data: newOptions.data,//post请求参数
+      params:newOptions.params,//get请求参数
       headers: newOptions.headers
     }).then(res => {
       //根据返回的状态码判断，注意res返回的并不一定都是status，比如小程序就是statusCode

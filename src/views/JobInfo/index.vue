@@ -364,12 +364,9 @@
 
 <style style="text/less"  lang="less">
   .job-wrapper {
-    height: 100%;
-    overflow: auto;
-
+    height: 100%; 
     .search-screen {
-      margin-bottom: 20px;
-
+      margin-bottom: 20px; 
       .demo-form-inline {
 
         display: flex;
@@ -381,7 +378,9 @@
       }
     }
 
-    .job-info {
+    .job-info { 
+      height:85%;
+       overflow: auto;
       .job-table {
         margin-bottom: 20px;
       }

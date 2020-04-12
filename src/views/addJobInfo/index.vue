@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-23 11:51:11
- * @LastEditTime: 2020-04-09 11:55:25
+ * @LastEditTime: 2020-04-09 19:31:48
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\addJobInfo\index.vue
@@ -320,7 +320,7 @@
   .wrapper {
     width:100%;
     height:100%;
-    overflow: auto;
+    
     .add-job,
     .job-detail {
       border: 1px solid #b5b0b0;
@@ -366,7 +366,8 @@
       height:70px;
     }
     .job-detail {
-
+      height:calc(100% - 100px);
+      overflow: auto;
       .detail {
         height: 70px;
         border-bottom: 1px solid #ccc;
