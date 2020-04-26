@@ -3,7 +3,10 @@
     <div :class="['person-info',{'readyInfo':clonePerson}]">
       <div class="add" v-if="!clonePerson">
         <div class="avatar">
-          <img :src=imgURL alt="">
+          <el-tooltip v-if="!imgURL" class="item" effect="dark" content="点击修改密码添加头像" placement="bottom">
+            <i class="iconfont-ats icon-lijimianshi avatar"></i>
+          </el-tooltip>
+          <img v-else :src=imgURL alt="">
           <div class="title">个人信息</div>
         </div>
         <div class="click" @click="onPersonInfoShow('personDialogVisible','personInfoForm')">
@@ -12,7 +15,10 @@
       </div>
       <div class="show" v-else>
         <div class="avatar">
-          <img :src=imgURL alt="">
+          <el-tooltip v-if="!imgURL" class="item" effect="dark" content="点击修改密码添加头像" placement="bottom">
+            <i class="iconfont-ats icon-lijimianshi avatar"></i>
+          </el-tooltip>
+          <img v-else :src=imgURL alt="">
           <div class="getInfo">
             <div class="name">
               <span>{{clonePerson.name}}</span>
@@ -103,10 +109,10 @@
           </template>
 
 
-           <template v-if="item.className == 'project-experience'">
+          <template v-if="item.className == 'project-experience'">
             <div :key="index1" class="project1" v-for="(ele,index1) in cloneProject" @mouseenter="onInternshipMouseEnter" @mouseleave="onInternshipMouseLeave">
               <div class="header">
-                <span>{{ele.projectName}}</span> 
+                <span>{{ele.projectName}}</span>
                 <span class="edit" style="margin-left:10px" @click="openDelProjectDialog('projectDeleteDialogVisible',index1)">
                   <i class="iconfont-ats  icon-shanchu"></i>
                   删除
@@ -148,7 +154,7 @@
           <el-radio v-model="personInfoForm.sex" label="1">男</el-radio>
           <el-radio v-model="personInfoForm.sex" label="0">女</el-radio>
         </el-form-item>
-         <el-form-item label="年龄" prop="age">
+        <el-form-item label="年龄" prop="age">
           <el-input v-model="personInfoForm.age"></el-input>
         </el-form-item>
         <el-form-item label="所在城市" prop="city">
@@ -227,16 +233,16 @@
       </el-form>
     </el-dialog>
 
-    
+
 
 
     <el-dialog title="项目经历" :visible.sync="projectDialogVisible" width="30%" center>
-        <el-form  ref="projectInfoForm" :rules="projectInfoRules" :model="projectInfoForm" label-width="80px">
+      <el-form ref="projectInfoForm" :rules="projectInfoRules" :model="projectInfoForm" label-width="80px">
         <el-form-item label="项目名称" prop="projectName">
           <el-input v-model="projectInfoForm.projectName"></el-input>
         </el-form-item>
         <el-form-item label="项目周期" prop="projectTime">
-         <el-date-picker size="large" v-model="projectInfoForm.projectTime" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
+          <el-date-picker size="large" v-model="projectInfoForm.projectTime" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="项目链接" prop="projectLink">
@@ -255,7 +261,7 @@
 
 
     <el-dialog title="专业技能" :visible.sync="majorDialogVisible" width="40%" center>
-       <el-form  ref="majorSkillForm" :model="majorSkillForm" :rules="majorSkillRules"  label-width="80px">
+      <el-form ref="majorSkillForm" :model="majorSkillForm" :rules="majorSkillRules" label-width="80px">
         <el-form-item label="专业技能" prop="major">
           <el-input type="textarea" :rows="8" placeholder="请输入内容" v-model="majorSkillForm.majorSkill">
           </el-input>
@@ -269,7 +275,7 @@
 
 
     <el-dialog title="个人评价" :visible.sync="evaluateDialogVisible" width="30%" center>
-      <el-form  ref="introduceForm" :model="introduceForm" :rules="introduceRules"  label-width="80px">
+      <el-form ref="introduceForm" :model="introduceForm" :rules="introduceRules" label-width="80px">
         <el-form-item label="个人简介" prop="introduce">
           <el-input type="textarea" :rows="8" placeholder="请输入内容" v-model="introduceForm.introduce">
           </el-input>
@@ -318,15 +324,15 @@
         projectDialogVisible: false,
         majorDialogVisible: false,
         evaluateDialogVisible: false,
-        internshipDeleteDialogVisible:false,
-        projectDeleteDialogVisible:false,
+        internshipDeleteDialogVisible: false,
+        projectDeleteDialogVisible: false,
 
         ...resumeData,
 
-        clonePerson:'',
+        clonePerson: '',
         cloneEducation: [],
         cloneInternship: [],
-        cloneInternshipNew:[],
+        cloneInternshipNew: [],
         cloneProject: [],
         cloneMajor: null,
         cloneEvaluate: null,
@@ -334,10 +340,10 @@
         isEducationEdit: false,
         isInternshipEdit: false,
         isInternshipEditIndex: null,
-        isProjectEdit:false,
-        isProjectEditIndex:null,
+        isProjectEdit: false,
+        isProjectEditIndex: null,
         internshipHover: false,
-        isEditMajor:false
+        isEditMajor: false
 
 
       }
@@ -362,19 +368,19 @@
           title: '项目经历',
           dialog: 'projectDialogVisible',
           cloneData: this.cloneProject,
-          editData:this.onEditProject
+          editData: this.onEditProject
         }, {
           className: 'major-skill',
           title: '专业技能',
           dialog: 'majorDialogVisible',
           cloneData: this.cloneMajor,
-          editData:this.onEditMajor
+          editData: this.onEditMajor
         }, {
           className: 'person-evaluate',
           title: '个人评价',
           dialog: 'evaluateDialogVisible',
           cloneData: this.cloneEvaluate,
-          editData:this.onEditIntroduce
+          editData: this.onEditIntroduce
         }]
       }
     },
@@ -390,24 +396,24 @@
     mounted() {},
     beforeDestroy() {},
     methods: {
-      cancelInternship(){ 
+      cancelInternship() {
         this.internshipDialogVisible = false
       },
-      onDeleteInternship(){
+      onDeleteInternship() {
         this.internshipDeleteDialogVisible = false;
-        this.cloneInternship.splice(this.deleteInternshipIndex,1)
-        this.sendInternshipInfo(this.cloneInternship,'internshipDeleteDialogVisible')
+        this.cloneInternship.splice(this.deleteInternshipIndex, 1)
+        this.sendInternshipInfo(this.cloneInternship, 'internshipDeleteDialogVisible')
       },
-      onDeleteProject(){
+      onDeleteProject() {
         this.projectDeleteDialogVisible = false;
-        this.cloneProject.splice(this.deleteProjectIndex,1)
-        this.sendProjectInfo(this.cloneProject,'projectDeleteDialogVisible')
+        this.cloneProject.splice(this.deleteProjectIndex, 1)
+        this.sendProjectInfo(this.cloneProject, 'projectDeleteDialogVisible')
       },
-      openDelProjectDialog(dialog,index){
+      openDelProjectDialog(dialog, index) {
         this[dialog] = true;
         this.deleteProjectIndex = index;
       },
-      openDelInternshipDialog(dialog,index){
+      openDelInternshipDialog(dialog, index) {
         this[dialog] = true;
         this.deleteInternshipIndex = index;
       },
@@ -453,30 +459,30 @@
         this[dialog] = true;
         this.internshipInfo = deepClone(ele);
       },
-      onEditProject(dialog, ele, index){//编辑项目经历
+      onEditProject(dialog, ele, index) { //编辑项目经历
         this.isProjectEditIndex = index;
         this.isProjectEdit = true;
         this[dialog] = true;
         this.projectInfoForm = deepClone(ele);
       },
-      onEditMajor(dialog, ele, index){ 
+      onEditMajor(dialog, ele, index) {
         this.isEditMajor = true;
         this[dialog] = true;
-        this.majorSkillForm.majorSkill= deepClone(this.cloneMajor).toString();
+        this.majorSkillForm.majorSkill = deepClone(this.cloneMajor).toString();
       },
-      onEditIntroduce(dialog, ele, index){
+      onEditIntroduce(dialog, ele, index) {
         this.isEditIntroduce = true;
         this[dialog] = true;
-        this.introduceForm.introduce= deepClone(this.cloneEvaluate).toString();
+        this.introduceForm.introduce = deepClone(this.cloneEvaluate).toString();
       },
-      addInternshipData(dialog) {//新增实习经历按钮点击事件
+      addInternshipData(dialog) { //新增实习经历按钮点击事件
         this[dialog] = true;
         this.isInternshipEdit = false;
         this.resetFormInfo(this.internshipInfo);
       },
       onAddInfoShow(e, item) { //点击添加按钮打开添加弹窗
-        if(this.clonePerson.length == 0){
-          this.$showMessage('请先添加个人信息','error');
+        if (this.clonePerson.length == 0) {
+          this.$showMessage('请先添加个人信息', 'error');
           return
         }
         this[item.dialog] = true
@@ -491,7 +497,7 @@
           if (valid) {
             if (formName == 'internshipInfo' || formName == 'projectInfoForm') { //如果编辑窗口是实习经历，用数组存储数据
               if (this.isInternshipEdit && this.isInternshipEditIndex != null ||
-              this.isProjectEdit && this.isProjectEditIndex != null) {
+                this.isProjectEdit && this.isProjectEditIndex != null) {
                 this[cloneObj].splice(this.isInternshipEditIndex || this.isProjectEditIndex, 1, deepClone(this[formName]))
               } else {
                 this[cloneObj].push(deepClone(this[formName])); //深度克隆，数据备份
@@ -512,11 +518,11 @@
       },
 
       resetFormRule(formName) { //重置信息表单
-        this.$refs[formName]&&this.$refs[formName].resetFields();
+        this.$refs[formName] && this.$refs[formName].resetFields();
       },
-      resetFormInfo(obj){
-        for(let i in obj){
-            obj[i] = ''
+      resetFormInfo(obj) {
+        for (let i in obj) {
+          obj[i] = ''
         }
       },
       sendPersonInfo(data, formName) { //把个人信息数据提交给服务器
@@ -526,8 +532,8 @@
           data: {
             ...data,
             // operator: this.$cookie.getCookie('username'),
-            userid:this.$cookie.getCookie('userid'),
-            operator:data.name
+            userid: this.$cookie.getCookie('userid'),
+            operator: data.name
           }
         }).then((res) => {
           if (res.statusCode == 200) {
@@ -602,7 +608,7 @@
               duration: 1500
             });
           }
-          formName&&this.resetFormRule(formName)
+          formName && this.resetFormRule(formName)
           this.isInternshipEdit = false
         })
       },
@@ -613,7 +619,7 @@
         }
         this.$ajax({
           method: 'post',
-          url: this.isProjectEdit?'editProjectInfo':'addProjectInfo', //判断是编辑数据还是新增数据
+          url: this.isProjectEdit ? 'editProjectInfo' : 'addProjectInfo', //判断是编辑数据还是新增数据
           data: {
             data,
             userid: this.$cookie.getCookie('userid')
@@ -632,18 +638,18 @@
               duration: 1500
             });
           }
-          formName&&this.resetFormRule(formName)
+          formName && this.resetFormRule(formName)
         })
       },
       sendMajorSkill(data, formName) {
-        console.log(data,'songbiao')
-        let reg = /\n/g; 
+        console.log(data, 'songbiao')
+        let reg = /\n/g;
         data.majorSkill = data.majorSkill.replace(reg, '//');
         this.cloneMajor = deepClone(data)
         this.cloneMajor = this.cloneMajor.majorSkill.split('//');
         this.$ajax({
           method: 'post',
-          url: this.isEditMajor?'editMajorInfo':'addMajorInfo', //判断是编辑数据还是新增数据
+          url: this.isEditMajor ? 'editMajorInfo' : 'addMajorInfo', //判断是编辑数据还是新增数据
           data: {
             data,
             userid: this.$cookie.getCookie('userid')
@@ -662,7 +668,7 @@
               duration: 1500
             });
           }
-          formName&&this.resetFormRule(formName)
+          formName && this.resetFormRule(formName)
         })
       },
       sendPersonIntroduce(data, formName) {
@@ -673,7 +679,7 @@
         this.cloneEvaluate = this.cloneEvaluate.introduce.split('//');
         this.$ajax({
           method: 'post',
-          url: this.isEditIntroduce?'editIntroduce':'addIntroduce', //判断是编辑数据还是新增数据
+          url: this.isEditIntroduce ? 'editIntroduce' : 'addIntroduce', //判断是编辑数据还是新增数据
           data: {
             data,
             userid: this.$cookie.getCookie('userid')
@@ -692,11 +698,11 @@
               duration: 1500
             });
           }
-          formName&&this.resetFormRule(formName)
+          formName && this.resetFormRule(formName)
         })
       }
     },
-    
+
   }
 </script>
 
@@ -755,10 +761,11 @@
     .internship-experience.active,
     .project-experience.active,
     .major-skill.active,
-    .person-evaluate.active{
-      background: rgb(250, 250, 250); 
+    .person-evaluate.active {
+      background: rgb(250, 250, 250);
       padding: 20px;
-      height:inherit;
+      height: inherit;
+
       // display: flex;
       .show {
         .avatar {
@@ -819,7 +826,8 @@
 
         }
 
-        .internship1,.project1{
+        .internship1,
+        .project1 {
           padding: 20px 0px;
           border-bottom: 1px solid #ccc;
 
@@ -876,8 +884,10 @@
             }
           }
         }
-        .major1,.evaluate1{
-          p{
+
+        .major1,
+        .evaluate1 {
+          p {
             font-weight: 400;
             line-height: 28px;
             font-size: 14px;
@@ -888,6 +898,19 @@
 
     .person-info {
       .add {
+        i.avatar {
+          width: 50px;
+          height: 50px;
+          border: 1px solid #ccc;
+          margin-right: 10px;
+          border-radius: 50%;
+          display: inline-block;
+          font-size: 40px;
+          line-height: 50px;
+          text-align: center;
+          color: #ccc
+        }
+
         .avatar {
           img {
             width: 50px;
@@ -914,6 +937,19 @@
           height: 100%;
           display: flex;
           align-items: center;
+
+          i.avatar {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #ccc;
+            margin-right: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            font-size: 80px;
+            line-height: 100px;
+            text-align: center;
+            color: #ccc
+          }
 
           img {
             width: 100px;

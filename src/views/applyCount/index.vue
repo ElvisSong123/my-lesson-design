@@ -17,7 +17,7 @@
           <el-input type="text" :placeholder="myPlaceholder" v-model.number="ruleForm.number"></el-input>
         </el-form-item>
         <el-form-item style="color:red;font-size:20px" class="form-label" label="邮箱" prop="email">
-          <el-input type="text" placeholder="请输入邮箱" v-model="ruleForm.email"></el-input>
+          <el-input type="text" placeholder="请输入正确的邮箱，接收消息" v-model="ruleForm.email"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" style="width:100%" @click='submitInfo'>确认提交</el-button>
