@@ -533,7 +533,7 @@
             ...data,
             // operator: this.$cookie.getCookie('username'),
             userid: this.$cookie.getCookie('userid'),
-            operator: data.name
+            operator: data.name,
           }
         }).then((res) => {
           if (res.statusCode == 200) {

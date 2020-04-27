@@ -4,13 +4,13 @@
     <div class="search-screen">
       <el-form :inline="true" :model="jobSearch" class="demo-form-inline">
         <el-form-item label="公司名称">
-          <el-input v-model="jobSearch.name" placeholder="输入公司"></el-input>
+          <el-input v-model="jobSearch.name" placeholder="输入公司" clearable></el-input>
         </el-form-item>
         <el-form-item label="工作地点">
-          <el-input v-model="jobSearch.place" placeholder="输入地点"></el-input>
+          <el-input v-model="jobSearch.place" placeholder="输入地点" clearable></el-input>
         </el-form-item>
         <el-form-item label="职位搜索">
-          <el-input v-model="jobSearch.job" placeholder="输入职位"></el-input>
+          <el-input v-model="jobSearch.job" placeholder="输入职位" clearable></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="searchBtn">查询</el-button>
@@ -120,7 +120,7 @@
 
       </div>
     </el-drawer>
-  
+
     <el-drawer class="job-drawer" :visible.sync="drawerJobVisible" :direction="direction" size="100%">
       <div slot="title" style="font-size:20px">职位详情</div>
       <div class="content">
@@ -141,7 +141,7 @@
       </div>
     </el-drawer>
 
-     <el-dialog title="投递职位" :visible.sync="deliverJobVisible" width="30%" center>
+    <el-dialog title="投递职位" :visible.sync="deliverJobVisible" width="30%" center>
       <span>一旦投递，简历无法撤回。确认投递该职位?</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="deliverJobVisible = false">取 消</el-button>
@@ -159,9 +159,9 @@
     props: {},
     data() {
       return {
-        deliverJobVisible:false,
-        aleadyDeliver:[],
-        currentJobInfo:'',
+        deliverJobVisible: false,
+        aleadyDeliver: [],
+        currentJobInfo: '',
         nowPage: 1,
         pageCount: 5,
         companyAvatar: '',
@@ -197,24 +197,24 @@
        * @param {type} 
        * @return: 
        */
-      getDeliverResume(){
+      getDeliverResume() {
         this.aleadyDeliver = [];
         this.$ajax({
-            method: 'post',
-            url:'getDeliverResume',
-            data:{
-              userid:this.$cookie.getCookie('userid')
-            }
-          }).then((res)=>{
-            if(res.statusCode == 200){
-               res.data.forEach(ele => {
-                 this.aleadyDeliver.push(ele.job_id);
-               });
-            }
-          })
+          method: 'post',
+          url: 'getDeliverResume',
+          data: {
+            userid: this.$cookie.getCookie('userid')
+          }
+        }).then((res) => {
+          if (res.statusCode == 200) {
+            res.data.forEach(ele => {
+              this.aleadyDeliver.push(ele.job_id);
+            });
+          }
+        })
       },
 
-      openDeliverJobVisible(data){
+      openDeliverJobVisible(data) {
         this.deliverJobVisible = true;
         this.currentJobInfo = data
       },
@@ -226,20 +226,26 @@
       async onDeliver(data) {
         this.deliverJobVisible = false;
         let res = await this.getData('getResumeData', {}, this.$cookie.getCookie('userid'));
-        if (res.statusCode == 200) {
+        
+        if (res.statusCode == 200 && res.data.educationinfo) {
           const { userid, ...resumeData } = res.data;
-          const { corp_id, job_id, job_address, job_name,company_name} = this.currentJobInfo;
-          let sendData = { corp_id, job_id, job_address, job_name,company_name, userid, resumeData,deliverState:'简历筛选' }; 
+          const { corp_id, job_id, job_address, job_name, company_name } = this.currentJobInfo;
+          let sendData = { corp_id, job_id, job_address, job_name, company_name, userid, resumeData, deliverState: '简历筛选' };
           this.$ajax({
             method: 'post',
-            url:'addDeliverResume',
-            data:sendData
-          }).then((res)=>{ 
-            if(res.statusCode == 200){
-              this.$showMessage('投递成功','success');
+            url: 'addDeliverResume',
+            data: sendData
+          }).then((res) => {
+            if (res.statusCode == 200) {
+              this.$showMessage('投递成功', 'success');
               this.getDeliverResume();
             }
           })
+        } else if(res.statusCode == 500 || !res.data.educationinfo){
+          this.$showMessage('请先完善简历内容', 'error');
+          setTimeout(() => {
+            this.$router.push('/myResume/addResume')
+          }, 2000)
         }
 
       },
@@ -283,7 +289,7 @@
               });
             }
             this.tableData = res;
-            console.log(this.tableData,'hellohello')
+            console.log(this.tableData, 'hellohello')
           }
         }, (err) => {
           this.$message.error('服务器开小差');
@@ -364,9 +370,11 @@
 
 <style style="text/less"  lang="less">
   .job-wrapper {
-    height: 100%; 
+    height: 100%;
+
     .search-screen {
-      margin-bottom: 20px; 
+      margin-bottom: 20px;
+
       .demo-form-inline {
 
         display: flex;
@@ -378,9 +386,10 @@
       }
     }
 
-    .job-info { 
-      height:85%;
-       overflow: auto;
+    .job-info {
+      height: 85%;
+      overflow: auto;
+
       .job-table {
         margin-bottom: 20px;
       }

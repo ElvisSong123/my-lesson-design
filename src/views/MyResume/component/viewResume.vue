@@ -9,7 +9,10 @@
     <div class="my-resume" v-else>
       <div class="person-info" v-if="clonePerson">
         <div class="avatar">
-          <img :src=imgURL alt="">
+          <el-tooltip v-if="!imgURL" class="item" effect="dark" content="点击修改密码添加头像" placement="bottom">
+            <i class="iconfont-ats icon-lijimianshi avatar"></i>
+          </el-tooltip>
+          <img v-else :src=imgURL alt="">
           <div class="getInfo">
             <div class="name">
               <span>{{clonePerson.name}}</span>
@@ -219,7 +222,18 @@
           height: 100%;
           display: flex;
           align-items: center;
-
+           i.avatar {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #ccc;
+            margin-right: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            font-size: 80px;
+            line-height: 100px;
+            text-align: center;
+            color: #ccc
+          }
           img {
             width: 100px;
             height: 100px;

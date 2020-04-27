@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-22 11:39:30
- * @LastEditTime: 2020-03-28 23:08:40
+ * @LastEditTime: 2020-04-27 23:01:37
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\DeliveryFeedback\index.vue
@@ -11,10 +11,11 @@
     <div class="search-screen">
       <el-form :inline="true" :model="studentSearch" class="demo-form-inline">
         <el-form-item label="专业">
-          <el-input v-model="studentSearch.major" placeholder="输入专业"></el-input>
+          <el-input v-model="studentSearch.major" placeholder="输入专业" clearable></el-input>
         </el-form-item>
         <el-form-item label="性别">
-          <el-input v-model="studentSearch.sex" placeholder="输入性别"></el-input>
+          <el-radio v-model="studentSearch.sex" label="男">男</el-radio>
+          <el-radio v-model="studentSearch.sex" label="女">女</el-radio>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="searchBtn">查询</el-button>
@@ -22,7 +23,11 @@
       </el-form>
 
       <div class="precent">
-          就业率：{{(allJobStudent / allStudent).toFixed(2) * 100 }} %
+        <span style="margin-right:10px">已就业人数：{{allJobDataCount}}</span>
+        <span style="margin:0 5px;color:#aaa">|</span>
+        <span style="margin-right:10px"> 学生总人数：{{allStudent}}</span>
+        <span style="margin:0 5px;color:#aaa">|</span>
+        就业率：{{(allJobDataCount / allStudent).toFixed(2) * 100 }} %
       </div>
     </div>
     <!--已就业信息 -->
@@ -62,47 +67,64 @@
         userid: '',
         nowPage: 1,
         pageCount: 5,
-        currentPage:1,
-        allJobDataCount:0,
-        allJobStudent:0,
-        allStudent:0,
+        currentPage: 1,
+        allJobDataCount: 0,
+        allJobStudent: 0,
+        allStudent: 0,
+        isSearchBySex:false,
+        isSearchByMajor:false,
         studentSearch: {
           major: '',
           sex: '',
         }
       }
     },
-    computed: {},
+    computed: {
+      turnSex(){
+        if(this.studentSearch.sex && this.studentSearch.sex == "男"){
+          return '1'
+        }else if(this.studentSearch.sex && this.studentSearch.sex == "女"){
+          return '0'
+        }else {
+          return ''
+        }
+      }
+    },
     watch: {},
     created() {
       this.getEntryStudentByPage();
-      this.getEntryStudentCount(this.studentSearch,(res)=>{this.allJobDataCount = res.data[0]['count(1)']});
-      this.getAllJobStudent();//获取已入职学生总数
-      this.getAllStudentCount()//获取注册学生总数
+      this.getEntryStudentCount(this.studentSearch, (res) => {this.allJobDataCount = res.data[0]['count(1)']});
+      // this.getAllJobStudent(); //获取已入职学生总数
+      this.getAllStudentCount() //获取注册学生总数
     },
     mounted() {},
     beforeDestroy() {},
     methods: {
       searchBtn() {
-          this.getEntryStudentByPage();
-          this.getEntryStudentCount(this.studentSearch,(res)=>{this.allJobDataCount = res.data[0]['count(1)']});
+        this.getEntryStudentByPage();
+        this.getEntryStudentCount(this.studentSearch, (res) => { this.allJobDataCount = res.data[0]['count(1)'] });
+        this.getAllStudentCount();
+        this.isSearchBySex = true;
+        this.isSearchByMajor = true;
       },
-      getAllJobStudent(){
-         this.getEntryStudentCount({major:'',sex:''},(res)=>{this.allJobStudent = res.data[0]['count(1)']});
-      },
-      getAllStudentCount(){
-          this.$ajax({
+      // getAllJobStudent() {
+      //   this.getEntryStudentCount({ major: '', sex: '' }, (res) => { this.allJobStudent = res.data[0]['count(1)'] });
+      // },
+      getAllStudentCount() {
+        this.$ajax({
           method: 'post',
           url: 'getAllStudentCount',
-          data: {}
+          data: {
+            sex:this.turnSex,
+            major:this.studentSearch.major
+          }
         }).then((res) => {
-            console.log(res);
-            this.allStudent =  res.data[0]['count(1)']
+          this.allStudent = res.data[0]['count(1)']
         }, (err) => {
           this.$message.error('服务器开小差');
         })
       },
-      getEntryStudentCount(data,callback){
+      getEntryStudentCount(data, callback) {
         this.$ajax({
           method: 'post',
           url: 'getEntryStudentCount',
@@ -110,7 +132,7 @@
             ...data,
           }
         }).then((res) => {
-            callback(res)
+          callback(res)
         }, (err) => {
           this.$message.error('服务器开小差');
         })
@@ -124,7 +146,7 @@
             nowPage: this.nowPage,
             pageCount: this.pageCount
           }
-        }).then((res) => { 
+        }).then((res) => {
           this.tableData = res.data
         }, (err) => {
           this.$message.error('服务器开小差');
@@ -132,7 +154,7 @@
 
 
       },
-       handleSizeChange(e) {
+      handleSizeChange(e) {
         this.pageCount = e;
         this.nowPage = 1;
         this.getEntryStudentByPage();
@@ -152,11 +174,13 @@
   .wrapper {
     height: 100%;
     overflow: auto;
-    .search-screen{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+
+    .search-screen {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
+
     .delivery-info {
       .job-table {
         margin-bottom: 20px;
@@ -174,10 +198,11 @@
 
 
     }
-    .block{
-        margin-top:20px;
-        margin:0 auto;
-        text-align: center;
+
+    .block {
+      margin-top: 20px;
+      margin: 0 auto;
+      text-align: center;
     }
   }
 </style>
