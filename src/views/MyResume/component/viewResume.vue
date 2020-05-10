@@ -137,16 +137,21 @@
         cloneProject: [],
         cloneMajor: null,
         cloneEvaluate: null,
+        timer:null
       }
     },
     computed: {},
     watch: {},
     created() {
-      this.imgURL = window.sessionStorage.getItem('avatar');
+       this.timer = setTimeout(()=>{
+        this.imgURL = this.$store.state.commonAvatar; 
+      },100)
       this.getPersonResume()
     },
     mounted() {},
-    beforeDestroy() {},
+    destroyed() {
+      clearTimeout(this.timer)
+    },
     methods: {
       getPersonResume() { //从数据库中找到对应的简历数据
         this.$ajax({

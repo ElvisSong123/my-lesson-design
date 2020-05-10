@@ -343,8 +343,8 @@
         isProjectEdit: false,
         isProjectEditIndex: null,
         internshipHover: false,
-        isEditMajor: false
-
+        isEditMajor: false,
+        timer:null,
 
       }
     },
@@ -386,15 +386,19 @@
     },
     watch: {},
     created() {
-      this.imgURL = window.sessionStorage.getItem('avatar');
+      // this.imgURL = window.sessionStorage.getItem('avatar');
+      this.timer = setTimeout(()=>{
+        this.imgURL = this.$store.state.commonAvatar; 
+      },100)
       let isAdd = this.$cookie.getCookie('isAdd');
-
       //如果之前提交过数据，则再次刷新页面时从数据库中拿数据。
       this.getPersonResume()
 
     },
     mounted() {},
-    beforeDestroy() {},
+    destroyed() {
+      clearTimeout(this.timer)
+    },
     methods: {
       cancelInternship() {
         this.internshipDialogVisible = false

@@ -48,7 +48,8 @@
       </el-table>
       <!-- 分页插件 -->
       <div class="block">
-        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 20]" :page-size="5" layout="total, sizes, prev, pager, next, jumper" :total="allJobDataCount">
+        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" 
+        :current-page.sync="currentPage" :page-sizes="[5, 10, 20]" :page-size="5" layout="total, sizes, prev, pager, next, jumper" :total="allJobDataCount">
         </el-pagination>
       </div>
     </div>
@@ -305,6 +306,7 @@
       handleSizeChange(e) {
         this.pageCount = e;
         this.nowPage = 1;
+        this.currentPage = 1;
         this.searchJobInfoByPage();
       },
       handleCurrentChange(e) {

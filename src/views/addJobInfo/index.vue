@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-23 11:51:11
- * @LastEditTime: 2020-04-09 19:31:48
+ * @LastEditTime: 2020-05-10 11:13:17
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\addJobInfo\index.vue
@@ -322,8 +322,7 @@
     height:100%;
     
     .add-job,
-    .job-detail {
-      border: 1px solid #b5b0b0;
+    .job-detail { 
       border-right: 0px;
       padding: 0 20px;
       margin-bottom: 20px;
@@ -364,15 +363,20 @@
     }
     .add-job{
       height:70px;
+      box-shadow: 0px 0px 9px 1px #ccc;
     }
     .job-detail {
       height:calc(100% - 100px);
       overflow: auto;
+      background: none;
+      margin:0;
+      padding:0;
+      border:0;
       .detail {
         height: 70px;
         border-bottom: 1px solid #ccc;
-        margin-top: 20px;
-
+        padding: 20px 20px 10px;
+        background:#fff;
         &:last-of-type {
           border: none;
         }

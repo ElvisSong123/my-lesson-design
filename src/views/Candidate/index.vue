@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-26 15:29:17
- * @LastEditTime: 2020-04-09 19:33:53
+ * @LastEditTime: 2020-04-29 22:26:54
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\Candidate\index.vue
@@ -12,10 +12,10 @@
     <div class="search-screen">
       <el-form :inline="true" :model="candidateSearch" class="demo-form-inline">
         <el-form-item label="投递职位">
-          <el-input v-model="candidateSearch.jobName" placeholder="输入投递职位"></el-input>
+          <el-input v-model="candidateSearch.jobName" clearable placeholder="输入投递职位"></el-input>
         </el-form-item>
         <el-form-item label="工作地点">
-          <el-input v-model="candidateSearch.place" placeholder="输入工作地点"></el-input>
+          <el-input v-model="candidateSearch.place" clearable placeholder="输入工作地点"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="searchBtn">查询</el-button>
@@ -45,7 +45,7 @@
       </el-table>
       <!-- 分页插件 -->
       <div class="block">
-        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 20]" :page-size="5" layout="total, sizes, prev, pager, next, jumper" :total="allJobDataCount">
+        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="currentPage" :page-sizes="[5, 10, 20]" :page-size="5" layout="total, sizes, prev, pager, next, jumper" :total="allJobDataCount">
         </el-pagination>
       </div>
     </div>
@@ -197,6 +197,7 @@
       handleSizeChange(e) {
         this.pageCount = e;
         this.nowPage = 1;
+        this.currentPage = 1;
         this.searchCandidateInfoByPage();
       },
       handleCurrentChange(e) {

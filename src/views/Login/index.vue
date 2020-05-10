@@ -72,7 +72,8 @@
         }],
         isRequestLogin: false, //判断登录状态，加锁处理
         imgURL: '',
-        thro: null
+        thro: null,
+        timer:null,
       }
     },
     computed: {},
@@ -85,19 +86,21 @@
       this.thro = throttling.throttling(this.getAvatar, 1500);
     },
     mounted() {},
-    beforeDestroy() {},
+    destroyed(){
+      clearTimeout(this.timer)
+    },
     methods: {
       getAvatar() {
         this.$ajax({
           method: 'post',
           url: 'getUserAvatar',
           data: {
-            userid:this.ruleForm.username
+            userid: this.ruleForm.username
           }
         }).then((res) => {
           if (res) {
             this.imgURL = res
-          }else{
+          } else {
             this.imgURL = ''
           }
         }, (err) => {
@@ -127,13 +130,11 @@
               this.$cookie.setCookie(`username`, res.username, 1);
               this.$cookie.setCookie(`status`, res.status, 1);
               this.$cookie.setCookie(`userid`, res.userid, 1);
-              window.sessionStorage.setItem('avatar', this.imgURL)
               this.handleInfo(res);
               this.isRequestLogin = false;
             }, (err) => {
               this.$message.error('服务器开小差');
               this.isRequestLogin = false;
-
             })
           } else {
             return false;
@@ -148,7 +149,9 @@
             duration: 1500
           });
           let path = this.redirect(this.ruleForm.status);
-          this.$router.push({ path })
+          this.timer = setTimeout(() => {
+            this.$router.push({ path })
+          }, 1000)
         } else {
           this.$message({
             showClose: true,
@@ -190,6 +193,7 @@
 
     .content-login {
       width: 400px;
+
       .avatar {
         width: 100%;
         height: 90px;

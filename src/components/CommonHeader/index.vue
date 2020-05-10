@@ -67,7 +67,9 @@
           }
         }).then((res) => {
           if (res) {
-            this.imgURL = res
+            this.imgURL = res;
+            this.$store.commit('addAvatar',res);
+            console.log('hahaha')
           }
         }, (err) => {
           this.$message.error('服务器开小差');

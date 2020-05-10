@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-03-22 11:39:30
- * @LastEditTime: 2020-04-27 23:01:37
+ * @LastEditTime: 2020-05-10 11:33:43
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \毕业设计\client\src\views\DeliveryFeedback\index.vue
@@ -16,6 +16,7 @@
         <el-form-item label="性别">
           <el-radio v-model="studentSearch.sex" label="男">男</el-radio>
           <el-radio v-model="studentSearch.sex" label="女">女</el-radio>
+           <el-radio v-model="studentSearch.sex" label="">全部</el-radio>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="searchBtn">查询</el-button>
@@ -27,7 +28,7 @@
         <span style="margin:0 5px;color:#aaa">|</span>
         <span style="margin-right:10px"> 学生总人数：{{allStudent}}</span>
         <span style="margin:0 5px;color:#aaa">|</span>
-        就业率：{{(allJobDataCount / allStudent).toFixed(2) * 100 }} %
+        就业率：{{((allJobDataCount / allStudent).toFixed(4) * 100).toFixed(2) }} %
       </div>
     </div>
     <!--已就业信息 -->
@@ -48,7 +49,8 @@
       </el-table>
     </div>
     <div class="block">
-      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 20]" :page-size="5" layout="total, sizes, prev, pager, next, jumper" :total="allJobDataCount">
+      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" 
+      :current-page.sync="currentPage" :page-sizes="[5,10, 20]" :page-size="5" layout="total, sizes, prev, pager, next, jumper" :total="allJobDataCount">
       </el-pagination>
     </div>
     <!-- 弹框 -->
@@ -101,6 +103,8 @@
     beforeDestroy() {},
     methods: {
       searchBtn() {
+        this.nowPage = 1;
+        this.currentPage = 1;
         this.getEntryStudentByPage();
         this.getEntryStudentCount(this.studentSearch, (res) => { this.allJobDataCount = res.data[0]['count(1)'] });
         this.getAllStudentCount();
@@ -157,6 +161,7 @@
       handleSizeChange(e) {
         this.pageCount = e;
         this.nowPage = 1;
+        this.currentPage = 1;
         this.getEntryStudentByPage();
       },
       handleCurrentChange(e) {
