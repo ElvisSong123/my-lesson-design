@@ -192,8 +192,7 @@
     background-size: 100% 100%;
 
     .content-login {
-      width: 400px;
-
+      width: 400px; 
       .avatar {
         width: 100%;
         height: 90px;
